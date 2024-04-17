@@ -10,11 +10,8 @@ public class SceneController : MonoBehaviour
     private void Start()
     {
         if (instance == null)
-            Destroy(instance);
-        else
-        {
             instance = this;
-        }
+        else Destroy(instance);
     }
 
     public void MoveSignIn()
@@ -25,6 +22,11 @@ public class SceneController : MonoBehaviour
     public void MoveSignUp()
     {
         SceneManager.LoadScene(1);
+    }
+
+    public void MoveMenuGame()
+    {
+        SceneManager.LoadScene("MenuGame");
     }
 
 
