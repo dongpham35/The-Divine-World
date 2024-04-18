@@ -5,8 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    public static SceneController instance;
+    private static SceneController instance;
 
+    public static SceneController Instance { get=>  instance; }
+
+    private void Awake()
+    {
+        if(instance != null) Destroy(instance);
+        SceneController.instance = this;
+    }
+/*
     public static SceneController getInstance()
     {
         if (instance == null)
@@ -14,7 +22,7 @@ public class SceneController : MonoBehaviour
             instance = new SceneController();
         }
         return instance;
-    }
+    }*/
 
     public void MoveSignIn()
     {

@@ -20,7 +20,7 @@ public class LogIn : MonoBehaviour
     {
         username = usernameInputField.text;
         password = passwordInputField.text;
-        URL = "http://192.168.1.7/TheDiVWorld/api/Account?username=" + username;
+        URL = "http://localhost/TheDiVWorld/api/Account?username=" + username;
         StartCoroutine(SendLoginRequest());
     }
 
@@ -40,7 +40,7 @@ public class LogIn : MonoBehaviour
                 string sql_password = stats["password"].ToString().Replace('"',' ').Replace(" ", "");
                 if (password.Equals(sql_password))
                 {
-                    SceneController.getInstance().MoveMenuGame();
+                    SceneController.Instance.MoveMenuGame();
                 }
                 else
                 {
