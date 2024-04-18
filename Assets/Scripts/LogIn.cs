@@ -16,15 +16,12 @@ public class LogIn : MonoBehaviour
     private string password;
     private string URL;
 
-
     public void SignIn()
     {
-
         username = usernameInputField.text;
         password = passwordInputField.text;
         URL = "http://192.168.1.7/TheDiVWorld/api/Account?username=" + username;
         StartCoroutine(SendLoginRequest());
-
     }
 
     IEnumerator SendLoginRequest()
@@ -32,19 +29,18 @@ public class LogIn : MonoBehaviour
         using(UnityWebRequest request = UnityWebRequest.Get(URL))
         {
             yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            if(request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError(request.error);
             }
             else
             {
                 string json = request.downloadHandler.text;
-
                 SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
                 string sql_password = stats["password"].ToString().Replace('"',' ').Replace(" ", "");
                 if (password.Equals(sql_password))
                 {
-                    Debug.Log("Dang nhap thanh cong");
+                    SceneController.getInstance().MoveMenuGame();
                 }
                 else
                 {

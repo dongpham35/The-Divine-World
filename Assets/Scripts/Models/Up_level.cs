@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Models
 {
-    internal class Property
+    internal class Up_level
     {
-        public int propertyID { get; set; }
-        public string username { get; set; }
+        public int levelID { get; set; }
+        public string @class { get; set; }
         public int blood { get; set; }
         public int attack_damage { get; set; }
         public int amor { get; set; }
-        public int critical_rate { get; set; }  
         public int speed { get; set; }
-        public int amor_penetraction { get; set; } 
     }
 }
