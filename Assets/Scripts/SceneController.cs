@@ -7,27 +7,27 @@ public class SceneController : MonoBehaviour
 {
     public static SceneController instance;
 
-    private void Start()
+    public static SceneController getInstance()
     {
         if (instance == null)
-            instance = this;
-        else Destroy(instance);
+        {
+            instance = new SceneController();
+        }
+        return instance;
     }
 
     public void MoveSignIn()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("SignIn");
     }
 
     public void MoveSignUp()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("SignUp");
     }
 
     public void MoveMenuGame()
     {
         SceneManager.LoadScene("MenuGame");
     }
-
-
 }
