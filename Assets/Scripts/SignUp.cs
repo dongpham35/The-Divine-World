@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Models;
+using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,6 @@ public class SignUp : MonoBehaviour
     private string password;
     private string repassword;
     private string data;
-    private bool isSignUp = false;
 
 
     public void SignUpAcount()
@@ -45,13 +45,8 @@ public class SignUp : MonoBehaviour
             return;
         }
 
-        URL = "http://192.168.1.7/TheDiVWorld/api/Account";
+        URL = "http://localhost/TheDiVWorld/api/Account";
         StartCoroutine(getAccount());
-        if (isSignUp)
-        {
-            Debug.Log("bat dau dang ky");
-            StartCoroutine(saveToAccount());
-        }    
     }
 
     IEnumerator getAccount()
@@ -72,8 +67,10 @@ public class SignUp : MonoBehaviour
                 }
                 else
                 {
-                    isSignUp = true;
+                    //data = "{\"username\":\"" + username + "\", \"email\":\"" + email + "\", \"password\":\"" + password + "\"}";
                     data = string.Format($"?username={username}&email={email}&password={password}");
+
+                    StartCoroutine(saveToAccount());
                 }
             }
             request.Dispose();
@@ -82,19 +79,18 @@ public class SignUp : MonoBehaviour
 
     IEnumerator saveToAccount()
     {
-        Debug.Log("vao ham save");
-        using (UnityWebRequest request = UnityWebRequest.Put(URL ,data))
+        using (UnityWebRequest request = UnityWebRequest.Put(URL + data ,data))
         {
-            Debug.Log("Vao request");
+            
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
+
                 Debug.LogError(request.error);
             }
             else
             {
-                Debug.Log("Đăng ký thành công");
-                SceneController.getInstance().MoveSignIn();
+                SceneController.Instance.MoveSignIn();
             }
             request.Dispose();
         }
