@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7823fdd2a0046b747a7a4a97592747ad
+guid: fbd56f7f86e5fb442b86e5b35ddf15c1
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -103,7 +103,364 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Aang_0
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 396
+        width: 103
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68979e67cb4f1e34f9819ed8663387bf
+      internalID: -4409161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_1
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 396
+        width: 79
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba16c6dc3ba51f14688c2ed4e3f80300
+      internalID: 1487686236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_2
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 396
+        width: 79
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7769398f296965f45b75d4a9b3ac848d
+      internalID: 310239371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_3
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 396
+        width: 83
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b098b46a595592448962bcb7ffa7308
+      internalID: -1035873881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_4
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 284
+        width: 88
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc77f3b4081694f40b4b849bc0c3602d
+      internalID: 1390491175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_5
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 284
+        width: 85
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b75f5e971082814d9dde45371e64fc3
+      internalID: -2068408726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_6
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 284
+        width: 113
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df3c6fe2d68c4cb4488c896002d9924d
+      internalID: -1873787520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_7
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 187
+        width: 115
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9dd8e3f08c0a6b43aaded4a86ff8467
+      internalID: -225044314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_8
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 284
+        width: 115
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8ea10a2d40e839458f7a929d64ada28
+      internalID: 93796899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_9
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 172
+        width: 97
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3546863be1b6734b8c43a7824aab50a
+      internalID: 703314866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_10
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 172
+        width: 132
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2de27d5e1df2cc4d94d27bc54d3fe5f
+      internalID: 1098912152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_11
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 172
+        width: 103
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93d87f17c72a6df46a91f95ed26d68f8
+      internalID: -1697174614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_12
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 60
+        width: 99
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30d8490ac7d4dc046b2185866f30a9d1
+      internalID: -325914781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_13
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 60
+        width: 95
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05fd61c23823c754d8e2ef83886094c4
+      internalID: -1593695814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_14
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 61
+        width: 126
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b406165e78a7e7944b5b8e938a312d16
+      internalID: 1433879876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_15
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 61
+        width: 122
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89a57c9c2eda5b84f8028922905bdc28
+      internalID: -2025775376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aang_16
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 61
+        width: 160
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99bb13bb1179e1b4e90939585e58a651
+      internalID: -965547273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -114,7 +471,24 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Aang_0: -4409161
+      Aang_1: 1487686236
+      Aang_10: 1098912152
+      Aang_11: -1697174614
+      Aang_12: -325914781
+      Aang_13: -1593695814
+      Aang_14: 1433879876
+      Aang_15: -2025775376
+      Aang_16: -965547273
+      Aang_2: 310239371
+      Aang_3: -1035873881
+      Aang_4: 1390491175
+      Aang_5: -2068408726
+      Aang_6: -1873787520
+      Aang_7: -225044314
+      Aang_8: 93796899
+      Aang_9: 703314866
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
