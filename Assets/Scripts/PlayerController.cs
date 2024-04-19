@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private float dirX, dirY;
+    private float dirX;
 
     private void Start()
     {
@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.J))
         {
-            Attack_nor();
+            StartCoroutine(Attack_nor());
         }
         else
         {
@@ -79,21 +79,25 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void Attack_nor()
+    IEnumerator Attack_nor()
     {
-        if (!isAttacking)
+        while(true)
         {
-            isAttacking = true;
-            comboIndex = 0;
-            rb.velocity = new Vector2(direction.x, rb.velocity.y);
-            animator_Player.SetInteger("Attack", comboIndex);
-        }
-        else
-        {
-            comboIndex++;
-            if (comboIndex > 1) comboIndex = 0;
-            rb.velocity = new Vector2(direction.x, rb.velocity.y);
-            animator_Player.SetInteger("Attack", comboIndex);
+            if (!isAttacking)
+            {
+                isAttacking = true;
+                comboIndex = 0;
+                rb.velocity = new Vector2(direction.x, rb.velocity.y);
+                animator_Player.SetInteger("Attack", comboIndex);
+            }
+            else
+            {
+                comboIndex++;
+                if (comboIndex > 1) comboIndex = 0;
+                rb.velocity = new Vector2(direction.x, rb.velocity.y);
+                animator_Player.SetInteger("Attack", comboIndex);
+            }
+            yield return new WaitForSeconds(0.5f);
         }
     }
 
