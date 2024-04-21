@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,14 +17,19 @@ public class PlayerController : MonoBehaviour
 
     private anim state = anim.idle;
 
+
     //property attack combo
-    private int comboIndex = 0;
-    private bool isAttacking = false;
+
+    private float noOfCombo = 0;
+    private float lastAttack = 0;
+    private float delayCombo = 0.6f;
 
     //property player
     private int speed = 10;
-    private int blood = 1;
+    private int blood = 100;
     private int attack_damage;
+    private static int power = 100;
+
 
     private Vector2 direction = new Vector2 (0, 0);
 
@@ -45,7 +51,6 @@ public class PlayerController : MonoBehaviour
         animator_Player = GetComponent<Animator>();
         spriRender_Player = GetComponent<SpriteRenderer>();
         collider_Player = GetComponent<BoxCollider2D>();
-        //animator_Player.SetInteger("Attack", -1);
 
     }
 
@@ -66,39 +71,46 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, speed * 1.5f);
         }
 
+        if (animator_Player.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && Time.time- lastAttack > 0.3)
+        {
+            animator_Player.SetBool("Attack1", false);
+        }
+        if (animator_Player.GetCurrentAnimatorStateInfo(0).IsName("Attack2") && Time.time - lastAttack > 0.3)
+        {
+            animator_Player.SetBool("Attack2", false);
+        }
+        if (animator_Player.GetCurrentAnimatorStateInfo(0).IsName("Attack3") && Time.time - lastAttack > 0.5)
+        {
+            animator_Player.SetBool("Attack3", false);
+        }
+        if (animator_Player.GetCurrentAnimatorStateInfo(0).IsName("Attack4") && Time.time - lastAttack > 0.4)
+        {
+            animator_Player.SetBool("Attack4", false);
+        }
+
+        if (Time.time - lastAttack > delayCombo)
+        {
+            noOfCombo = 0;
+
+        }
+
         if (Input.GetKeyDown(KeyCode.J))
         {
-            StartCoroutine(Attack_nor());
+            anim_Attack_Nor();
+
         }
-        else
+
+        if(Input.GetKeyDown(KeyCode.K))
         {
-            animator_Player.SetInteger("Attack", -1);
+            anim_fire();
         }
-        Debug.Log(state);
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            anim_push();
+        }
+        if (blood == 0) anim_dead();
         UpdateAnimation();
-    }
-
-
-    IEnumerator Attack_nor()
-    {
-        while(true)
-        {
-            if (!isAttacking)
-            {
-                isAttacking = true;
-                comboIndex = 0;
-                rb.velocity = new Vector2(direction.x, rb.velocity.y);
-                animator_Player.SetInteger("Attack", comboIndex);
-            }
-            else
-            {
-                comboIndex++;
-                if (comboIndex > 1) comboIndex = 0;
-                rb.velocity = new Vector2(direction.x, rb.velocity.y);
-                animator_Player.SetInteger("Attack", comboIndex);
-            }
-            yield return new WaitForSeconds(0.5f);
-        }
     }
 
     
@@ -136,5 +148,54 @@ public class PlayerController : MonoBehaviour
     private bool isGround()
     {
         return Physics2D.BoxCast(collider_Player.bounds.center, collider_Player.bounds.size, 0f, Vector2.down, .1f, layerMask);
+    }
+
+    private void anim_Attack_Nor()
+    {
+        lastAttack = Time.time;
+        noOfCombo++;
+        if(noOfCombo > 2)
+        {
+            noOfCombo = 1;
+            animator_Player.SetBool("Attack2", false);
+
+        }
+        if (noOfCombo == 1)
+        {
+            animator_Player.SetBool("Attack2", false);
+            animator_Player.SetBool("Attack1", true);
+        }
+        if(noOfCombo == 2)
+        {
+            animator_Player.SetBool("Attack1", true);
+            animator_Player.SetBool("Attack2", true);
+
+
+        }
+    }
+
+
+    private void anim_fire()
+    {
+        noOfCombo = 0;
+        lastAttack = Time.time;
+        animator_Player.SetBool("Attack2", false);
+        animator_Player.SetBool("Attack1", false);
+        animator_Player.SetBool("Attack3", true);
+    }
+
+
+    private void anim_push()
+    {
+        noOfCombo = 0;
+        lastAttack = Time.time;
+        animator_Player.SetBool("Attack2", false);
+        animator_Player.SetBool("Attack1", false);
+        animator_Player.SetBool("Attack4", true);
+    }
+
+    private void anim_dead()
+    {
+        animator_Player.SetBool("BeKnockOut", true);
     }
 }
