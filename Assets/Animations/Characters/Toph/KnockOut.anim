@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: KnockOut_Aang
+  m_Name: KnockOut
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -20,7 +20,7 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: -325914781, guid: fbd56f7f86e5fb442b86e5b35ddf15c1, type: 3}
+      value: {fileID: 1134558564, guid: 4cb1da0b426b1604f98bc681e928deb2, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -40,7 +40,7 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: -325914781, guid: fbd56f7f86e5fb442b86e5b35ddf15c1, type: 3}
+    - {fileID: 1134558564, guid: 4cb1da0b426b1604f98bc681e928deb2, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
