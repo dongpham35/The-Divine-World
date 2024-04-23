@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 443738727124602390}
   - component: {fileID: 443738727124602389}
   - component: {fileID: 443738727124602394}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Toph
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -168,6 +168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d0280e099e6719429e52ded88379e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InputHorizontal: 
+  InputVertical: 
   layerMask:
     serializedVersion: 2
     m_Bits: 8
