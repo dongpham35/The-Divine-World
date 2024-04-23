@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
+    public string InputHorizontal;
+    public string InputVertical;
+    public KeyCode keycodePlayer1_Attack1;
+    public KeyCode keycodePlayer1_Attack2;
+    public KeyCode keycodePlayer1_Attack3;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriRender_Player;
@@ -31,7 +35,10 @@ public class PlayerController : MonoBehaviour
     private static int power = 100;
 
 
-    private Vector2 direction = new Vector2 (0, 0);
+    private float startTime;
+
+
+    private Vector3 direction = new Vector3 (0, 0, 0);
 
     private static PlayerController instance;
     public static PlayerController Instance { get { return instance; } }
@@ -56,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        dirX = Input.GetAxisRaw("Horizontal");
+        dirX = Input.GetAxisRaw(InputHorizontal);
         if (isGround())
         {
             rb.velocity = new Vector2((float)dirX * speed * 2 / 3, rb.velocity.y);
@@ -66,7 +73,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2((float)dirX * speed, rb.velocity.y);
         }
 
-        if (Input.GetButtonDown("Vertical") && isGround())
+        if (Input.GetButtonDown(InputVertical) && isGround())
         {
             rb.velocity = new Vector2(rb.velocity.x, speed * 1.5f);
         }
@@ -94,18 +101,18 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(keycodePlayer1_Attack1))
         {
             anim_Attack_Nor();
-
+            hitPlayer();
         }
 
-        if(Input.GetKeyDown(KeyCode.K))
+        if(Input.GetKeyDown(keycodePlayer1_Attack2))
         {
             anim_fire();
         }
 
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(keycodePlayer1_Attack3))
         {
             anim_push();
         }
@@ -120,12 +127,12 @@ public class PlayerController : MonoBehaviour
         {
             spriRender_Player.flipX = false;
             state = anim.run;
-            direction.Set(1, 0);
+            direction.Set(1, 0, 0);
         }else if(rb.velocity.x < .0f)
         {
             spriRender_Player.flipX=true;
             state = anim.run;
-            direction.Set(-1, 0);
+            direction.Set(-1, 0, 0);
         }
         else
         {
@@ -197,5 +204,24 @@ public class PlayerController : MonoBehaviour
     private void anim_dead()
     {
         animator_Player.SetBool("BeKnockOut", true);
+    }
+
+    private void hitPlayer()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction, direction, 0.5f, LayerMask.GetMask("PLayer"));
+        if (hit.collider != null)
+        {
+            if (hit.collider.CompareTag(gameObject.tag))
+            {
+                PlayerController enemy = gameObject.GetComponent<PlayerController>();
+                enemy.hitPlayer();
+            }
+        }
+    }
+
+
+    public void beAttacked()
+    {
+        animator_Player.SetBool("BeAttacked", true);
     }
 }
