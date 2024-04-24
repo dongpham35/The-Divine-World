@@ -208,14 +208,11 @@ public class PlayerController : MonoBehaviour
 
     private void hitPlayer()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction, direction, 0.5f, LayerMask.GetMask("PLayer"));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f , direction, 0.2f, LayerMask.GetMask("Player"));
         if (hit.collider != null)
         {
-            if (hit.collider.CompareTag(gameObject.tag))
-            {
-                PlayerController enemy = gameObject.GetComponent<PlayerController>();
-                enemy.hitPlayer();
-            }
+            NonPlayerCharacter npc = hit.collider.GetComponent<NonPlayerCharacter>();
+            npc.ShowCanvas();
         }
     }
 
