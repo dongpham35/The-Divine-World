@@ -1,9 +1,11 @@
+using Assets.Scripts.Models;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneController : MonoBehaviour
+public class SceneController : MonoBehaviourPunCallbacks
 {
     private static SceneController instance;
 
@@ -14,28 +16,34 @@ public class SceneController : MonoBehaviour
         if(instance != null) Destroy(instance);
         SceneController.instance = this;
     }
-/*
-    public static SceneController getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new SceneController();
-        }
-        return instance;
-    }*/
 
-    public void MoveSignIn()
+
+    public void MoveToSignIn()
     {
         SceneManager.LoadScene("SignIn");
     }
 
-    public void MoveSignUp()
+    public void MoveToSignUp()
     {
         SceneManager.LoadScene("SignUp");
     }
 
-    public void MoveMenuGame()
+    public void MoveToMenuGame()
     {
         SceneManager.LoadScene("MenuGame");
     }
+
+
+    public void MoveToDemo()
+    {
+        SceneManager.LoadScene("Demo");
+    }
+
+    public void MoveToLoading()
+    {
+        SceneManager.LoadScene("Loading");
+    }
+
+
+
 }
