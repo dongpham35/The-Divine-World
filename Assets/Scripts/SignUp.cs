@@ -6,6 +6,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEditor;
 
 public class SignUp : MonoBehaviour
 {
@@ -21,6 +22,14 @@ public class SignUp : MonoBehaviour
     private string repassword;
     private string data;
 
+    private AudioSource soundTrack;
+
+    private void Start()
+    {
+        soundTrack = GetComponent<AudioSource>();
+        soundTrack.Play();
+    }
+
 
     public void SignUpAcount()
     {
@@ -31,22 +40,33 @@ public class SignUp : MonoBehaviour
 
         if(username.Count() > 16)
         {
-            Debug.Log("Tên tài khoản không được quá 16 ký tự");
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("Thông báo", "Tên tài khoản không được quá 16 ký tự", "Ok");
+#endif
             return;
         }
         if(password.Count() > 16)
         {
-            Debug.Log("Mật không được quá 16 ký tự");
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("Thông báo", "Mật không được quá 16 ký tự", "Ok");
+#endif
             return;
         }    
         if(!password.Equals(repassword))
         {
-            Debug.Log("Mật khẩu không đúng");
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("Thông báo", "Mật khẩu không đúng", "Ok");
+#endif
             return;
         }
 
-        URL = "http://localhost/TheDiVWorld/api/Account";
+        URL = "http://192.168.1.4/TheDiVWorld/api/Account";
         StartCoroutine(getAccount());
+    }
+
+    public void SignIn()
+    {
+        SceneController.Instance.MoveToSignIn();
     }
 
     IEnumerator getAccount()
@@ -63,7 +83,9 @@ public class SignUp : MonoBehaviour
                 string json = request.downloadHandler.text;
                 if (!json.Equals("null", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    Debug.Log("Tài khoản đã tồn tại");
+#if UNITY_EDITOR
+                    EditorUtility.DisplayDialog("Thông báo", "Tài khoản đã tồn tại", "Ok");
+#endif
                 }
                 else
                 {
@@ -90,7 +112,7 @@ public class SignUp : MonoBehaviour
             }
             else
             {
-                SceneController.Instance.MoveSignIn();
+                SceneController.Instance.MoveToSignIn();
             }
             request.Dispose();
         }

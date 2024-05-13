@@ -8,6 +8,14 @@ namespace Assets.Scripts.Models
 {
     internal class Property
     {
+        private static Property instance = new Property();
+        public static Property Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
         public int propertyID { get; set; }
         public string username { get; set; }
         public int blood { get; set; }
