@@ -16,6 +16,7 @@ namespace Assets.Scripts.Models
             } 
         }
 
+
         public string username { get; set; }
         public string avatar { get;set; }
         public string email { get; set; }
@@ -26,15 +27,5 @@ namespace Assets.Scripts.Models
 
         public int experience_points { get; set; }
 
-        public Account()
-        {
-            this.username = "";
-            this.avatar = "";
-            this.email = "";
-            this.password = "";
-            this.gold = 0;
-            this.levelID = 0;
-            this.@class = "";
-        }
     }
 }

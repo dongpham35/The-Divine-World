@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEditor;
 
 public class MenuGameController : MonoBehaviourPunCallbacks
 {
@@ -267,14 +268,31 @@ public class MenuGameController : MonoBehaviourPunCallbacks
 
     public void JoinRoom()
     {
-        if (panel_Map.activeSelf)
+        if(PhotonNetwork.InLobby)
         {
-            PhotonNetwork.JoinRoom(ipfNameRoom.text);
-        }else if (panel_PvP.activeSelf)
+            if (panel_Map.activeSelf)
+            {
+                PhotonNetwork.JoinRoom(ipfNameRoom.text);
+            }
+            else if (panel_PvP.activeSelf)
+            {
+                PhotonNetwork.JoinRoom(ipfNameRoomPvP.text);
+            }
+        }
+        else
         {
-            PhotonNetwork.JoinRoom(ipfNameRoomPvP.text);
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("Thông báo", "Lỗi", "Ok");
+#endif
+            PhotonNetwork.JoinLobby();
         }
         
+    }
+
+    public override void OnJoinedLobby()
+    {
+        base.OnJoinedLobby();
+        PhotonNetwork.LoadLevel("MenuGame");
     }
 
     public void LogOut()

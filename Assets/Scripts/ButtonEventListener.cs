@@ -161,7 +161,7 @@ public class ButtonEventListener : MonoBehaviour
     
     IEnumerator postItemAttachedTable(string username, int itemID1, int itemID2, int itemID3, int itemID4, int itemID5, int itemID6)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Item_Attached?username={username}&itemID1={itemID1}&itemID2={itemID2}" +
+        string url = $"http://localhost/TheDiVWorld/api/Item_Attached?username={username}&itemID1={itemID1}&itemID2={itemID2}" +
             $"&itemID3={itemID3}&itemID4={itemID4}&itemID5={itemID5}&itemID6={itemID6}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
@@ -184,7 +184,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postIventoryItemTable(int inventoryID, int itemID, int quality)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
+        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -204,7 +204,7 @@ public class ButtonEventListener : MonoBehaviour
     }
     IEnumerator deleteInventoryItemTable(int inventoryID, int itemID)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}";
+        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}";
         using (UnityWebRequest request = UnityWebRequest.Delete(url))
         {
 
@@ -225,7 +225,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator putInventoryItemTable(int inventoryID, int itemID, int quality)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
+        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
         using (UnityWebRequest request = UnityWebRequest.Put(url, "PUT"))
         {
 
@@ -246,7 +246,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable_amor(string username,int amor)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&amor={amor}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&amor={amor}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -267,7 +267,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable_attackdamage(string username, int attack_damage)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&amor={attack_damage}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&amor={attack_damage}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -288,7 +288,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable_blood(string username, int blood)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&blood={blood}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&blood={blood}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -308,7 +308,7 @@ public class ButtonEventListener : MonoBehaviour
     }
     IEnumerator postPropertyTable_criticalrate(string username, int critical_rate)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&crittical_rate={critical_rate}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&crittical_rate={critical_rate}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -329,7 +329,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable_speed(string username, int speed)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&speed={speed}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&speed={speed}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -349,7 +349,7 @@ public class ButtonEventListener : MonoBehaviour
     }
     IEnumerator postPropertyTable_amorpenetraction(string username, int amor_penetraction)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&amor_penetraction={amor_penetraction}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&amor_penetraction={amor_penetraction}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -370,7 +370,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable(string username, int blood, int attack_damage, int amor, int critical_rate, int speed, int amor_penetraction)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}" +
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}" +
             $"&critical_rate={critical_rate}&speed={speed}&amor_penetraction={amor_penetraction}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
