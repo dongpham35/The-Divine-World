@@ -177,7 +177,7 @@ public class MapController : MonoBehaviourPunCallbacks
     }
     IEnumerator postAccountTable_gold(string username, int gold)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Account?username={username}&gold={gold}";
+        string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&gold={gold}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -198,7 +198,7 @@ public class MapController : MonoBehaviourPunCallbacks
 
     IEnumerator postAccountTable_exp(string username, int exp)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Account?username={username}&exp={exp}";
+        string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&exp={exp}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 

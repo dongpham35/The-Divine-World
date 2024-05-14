@@ -47,7 +47,7 @@ public class BuyItemShop : MonoBehaviour
 
     IEnumerator postAccountTable_gold(string username, int gold)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Account?username={username}&gold={gold}";
+        string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&gold={gold}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -67,7 +67,7 @@ public class BuyItemShop : MonoBehaviour
     }
     IEnumerator putInventoryItemTable(int inventoryID, int itemID, int quality)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
+        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
         using (UnityWebRequest request = UnityWebRequest.Put(url, "PUT"))
         {
 
@@ -88,7 +88,7 @@ public class BuyItemShop : MonoBehaviour
     }
     IEnumerator postIventoryItemTable(int inventoryID, int itemID, int quality)
     {
-        string url = $"http://192.168.1.4/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
+        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
             yield return request.SendWebRequest();

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2105542925779383990}
   - component: {fileID: 169096399744866798}
-  - component: {fileID: 5318863628927805120}
+  - component: {fileID: 3762603380262436655}
   m_Layer: 6
   m_Name: powerBar
   m_TagString: Untagged
@@ -25,20 +25,20 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 411010950796516337}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1962974832667167796}
   - {fileID: 1162334159719835725}
-  m_Father: {fileID: 7836682790481839762}
+  m_Father: {fileID: 5972560693462136588}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -215, y: 127.2}
-  m_SizeDelta: {x: 100, y: 15}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0.49121094, y: 0.6508789}
+  m_SizeDelta: {x: 0.9825363, y: 0.5092125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &169096399744866798
 MonoBehaviour:
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5318863628927805120
+--- !u!114 &3762603380262436655
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1297280837631824138}
   - component: {fileID: 4948415715724180171}
-  - component: {fileID: 8756791934875917558}
+  - component: {fileID: 7970162715394299830}
   m_Layer: 6
   m_Name: healthbar
   m_TagString: Untagged
@@ -205,20 +205,20 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1396729526163532381}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8363041941057213698}
   - {fileID: 1456950452789755742}
-  m_Father: {fileID: 7836682790481839762}
+  m_Father: {fileID: 5972560693462136588}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -215, y: 141.7}
-  m_SizeDelta: {x: 100, y: 15}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.491333, y: -0.25064087}
+  m_SizeDelta: {x: 0.9825363, y: 0.50131416}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4948415715724180171
 MonoBehaviour:
@@ -271,7 +271,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &8756791934875917558
+--- !u!114 &7970162715394299830
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -461,8 +461,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 1469486419154929713, guid: 460d88925c957d046b3b1de6cbc86814, type: 3}
-  healthBar: {fileID: 8756791934875917558}
-  powerBar: {fileID: 5318863628927805120}
+  healthBar: {fileID: 7970162715394299830}
+  powerBar: {fileID: 3762603380262436655}
   cooldownHit1: 0
   cooldownHit2: 0
   cooldownHit3: 0
@@ -512,7 +512,7 @@ MonoBehaviour:
   m_PositionModel:
     SynchronizeEnabled: 1
     TeleportEnabled: 1
-    TeleportIfDistanceGreaterThan: 3
+    TeleportIfDistanceGreaterThan: 1
     InterpolateOption: 2
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 1
@@ -546,25 +546,25 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 3
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: StateNor
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: BeAttacked
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: BeKnockOut
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Attack1
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Attack2
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Attack3
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Attack4
   m_SynchronizeLayers:
   - SynchronizeType: 0
@@ -953,6 +953,44 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &4505182826006815828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5972560693462136588}
+  m_Layer: 6
+  m_Name: Bar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5972560693462136588
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4505182826006815828}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1297280837631824138}
+  - {fileID: 2105542925779383990}
+  m_Father: {fileID: 7836682790481839762}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.90170246}
+  m_AnchorMax: {x: 0.1888868, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -1, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4909839124036022115
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,7 +1027,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.25002003}
+  m_AnchoredPosition: {x: 0, y: 0.2500229}
   m_SizeDelta: {x: 0, y: -0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6057529502210709354
@@ -1150,8 +1188,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1297280837631824138}
-  - {fileID: 2105542925779383990}
+  - {fileID: 5972560693462136588}
   m_Father: {fileID: 2448778880997209178}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1257,7 +1294,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.25002003}
+  m_AnchoredPosition: {x: 0, y: 0.2500229}
   m_SizeDelta: {x: 0, y: -0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3079737095891968603

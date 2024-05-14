@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 public class API_Restful : MonoBehaviour
 {
-    private string URL = "http://192.168.1.4/TheDiVWorld/api/";
+    private string URL = "http://localhost/TheDiVWorld/api/";
 
     private void Awake()
     {

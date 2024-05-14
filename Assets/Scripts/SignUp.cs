@@ -60,7 +60,7 @@ public class SignUp : MonoBehaviour
             return;
         }
 
-        URL = "http://192.168.1.4/TheDiVWorld/api/Account";
+        URL = "http://localhost/TheDiVWorld/api/Account";
         StartCoroutine(getAccount());
     }
 

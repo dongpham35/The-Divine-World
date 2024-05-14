@@ -19357,6 +19357,7 @@ MonoBehaviour:
   - {fileID: 443738727124602388, guid: 24ff16fda2344c74ca066b291f0b612f, type: 3}
   - {fileID: 134845139001293987, guid: c830f69c80936a8469bf8dbeeb001ca1, type: 3}
   panel_Exit: {fileID: 2076572766}
+  smoothSpeed: 0.125
 --- !u!82 &953799548
 AudioSource:
   m_ObjectHideFlags: 0
@@ -19372,7 +19373,7 @@ AudioSource:
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
-  Mute: 0
+  Mute: 1
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128

@@ -27,7 +27,7 @@ public class LogIn : MonoBehaviour
     {
         username = usernameInputField.text;
         password = passwordInputField.text;
-        URL = "http://192.168.1.4/TheDiVWorld/api/Account?username=" + username;
+        URL = "http://localhost/TheDiVWorld/api/Account?username=" + username;
         StartCoroutine(SendLoginRequest());
     }
     public void SingUp()
