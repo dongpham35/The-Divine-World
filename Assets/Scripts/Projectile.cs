@@ -1,4 +1,5 @@
 using Assets.Scripts.Models;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,10 @@ public class Projectile : MonoBehaviour
     private Rigidbody2D rb;
     private float lastFireTime;
     private int damageSkill;
+    private float damageSkill_rate;
+
+    public int attack, am_penetraction;
+
 
     private void Awake()
     {
@@ -19,19 +24,19 @@ public class Projectile : MonoBehaviour
     {
         if (gameObject.name.Contains("Aang"))//gio 27
         {
-            damageSkill = 4 + (int)(0.27 * Property.Instance.attack_damage);
+            damageSkill = 4 + (int)(0.27 * attack);
         }
         else if (gameObject.name.Contains("Katara"))//nuoc 30
         {
-            damageSkill = 4 + (int)(0.3 * Property.Instance.attack_damage);
+            damageSkill = 5 + (int)(0.3 * attack);
         }
         else if (gameObject.name.Contains("Toph"))//dat 32
         {
-            damageSkill = 5 + (int)(0.32 * Property.Instance.attack_damage);
+            damageSkill = 5 + (int)(0.32 * attack);
         }
         else if (gameObject.name.Contains("Zuko"))//lua 35
         {
-            damageSkill = 7 + (int)(0.35 * Property.Instance.attack_damage);
+            damageSkill = 7 + (int)(0.35 * attack);
         }
     }
 
@@ -51,10 +56,10 @@ public class Projectile : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && !PhotonNetwork.CurrentRoom.Name.Contains("Map"))
         {
-            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-            player.beAttacked(damageSkill, Property.Instance.amor_penetraction);
+            PlayerController enemy = collision.collider.GetComponent<PlayerController>();
+            enemy.beAttack(damageSkill, am_penetraction);
             Destroy(gameObject);
         }
 

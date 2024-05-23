@@ -7,6 +7,7 @@ using Assets.Scripts.Models;
 using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class LogIn : MonoBehaviour
 {

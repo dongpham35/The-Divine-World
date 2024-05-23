@@ -91,7 +91,6 @@ public class SignUp : MonoBehaviour
                 {
                     //data = "{\"username\":\"" + username + "\", \"email\":\"" + email + "\", \"password\":\"" + password + "\"}";
                     data = string.Format($"?username={username}&email={email}&password={password}");
-
                     StartCoroutine(saveToAccount());
                 }
             }

@@ -17,14 +17,13 @@ public class Chicken : MonoBehaviour
     [SerializeField] private int critical_rate = 0;
     [SerializeField] private int amor_penetraction = 0;
     public int gold = 1;
-    public int experience_point = 5;
+    public int experience_point = 3;
 
     private Animator animChicken;
     private SpriteRenderer spriteChicken;
     private PhotonView view;
     private Rigidbody2D rb;
 
-    private bool isColliderPLayer;
     private float lastDamageTime;
 
     private float damagebetaken; //%
@@ -46,7 +45,6 @@ public class Chicken : MonoBehaviour
             character = GameObject.FindGameObjectWithTag("Player").transform;
         }
         currenthealth = blood;
-        isColliderPLayer = false;
         canAction = true;
 
         direction = new Vector3(1, 0, 0);
@@ -68,15 +66,6 @@ public class Chicken : MonoBehaviour
                 canAction = true;
             }
 
-            if (isColliderPLayer && canAction)
-            {
-                if(Time.time - lastDamageTime > 2f)
-                {
-                    PlayerController player = character.GetComponent<PlayerController>();
-                    player.beAttacked(attack_damage, amor_penetraction);
-                    lastDamageTime = Time.time;
-                }
-            }
 
             if (Vector2.Distance(transform.position, character.position) < 2f)
             {
@@ -92,7 +81,7 @@ public class Chicken : MonoBehaviour
                 direction = (character.position - transform.position).normalized;
                 MoveNormalState();
             }
-
+            hitPlayer();
         }
     }
 
@@ -109,6 +98,10 @@ public class Chicken : MonoBehaviour
         }
 
         rb.velocity = new Vector2(speed * direction.x, rb.velocity.y);
+        if(Vector2.Distance(transform.position, character.position) < 0.7f)
+        {
+            rb.velocity = Vector2.zero;
+        }
         if (rb.velocity.x > 0)
         {
             animChicken.SetInteger("StateNor", 1);
@@ -127,6 +120,7 @@ public class Chicken : MonoBehaviour
         {
             animChicken.SetInteger("StateNor", 1);
         }
+        
     }
 
 
@@ -140,23 +134,14 @@ public class Chicken : MonoBehaviour
         currenthealth = Mathf.Clamp(currenthealth - (int)(attack * damagebetaken), 0, blood);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    { 
-        if (collision.gameObject.CompareTag("Player") && !isColliderPLayer)
-        {
-            isColliderPLayer = true;
-            PlayerController player = character.GetComponent<PlayerController>();
-            player.beAttacked(attack_damage, amor_penetraction);
-            lastDamageTime = Time.time;
-        }
-    }
-
-
-    private void OnCollisionExit2D(Collision2D collision)
+    private void hitPlayer()
     {
-        if (collision.gameObject.CompareTag("Player"))
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.5f, LayerMask.GetMask("Player"));
+        if(hit.collider != null && Time.time - lastDamageTime > 1.5f)
         {
-            isColliderPLayer = false;
+            PlayerController player = character.GetComponent<PlayerController>();
+            player.beAttack(attack_damage, amor_penetraction);
+            lastDamageTime = Time.time;
         }
     }
 }

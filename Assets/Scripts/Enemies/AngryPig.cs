@@ -17,14 +17,13 @@ public class AngryPig : MonoBehaviour
     [SerializeField] private int critical_rate = 0;
     [SerializeField] private int amor_penetraction = 0;
     public int gold = 3;
-    public int experience_point = 10;
+    public int experience_point = 5;
 
     private Animator animAngryPig;
     private SpriteRenderer spriteAngryPig;
     private PhotonView view;
     private Rigidbody2D rb;
 
-    private bool isColliderPLayer;
     private float lastDamageTime;
 
     private float damagebetaken; //%
@@ -47,7 +46,6 @@ public class AngryPig : MonoBehaviour
         }
         currenthealth = blood;
         
-        isColliderPLayer = false;
         canAction = true;
 
         direction = new Vector3(1, 0, 0);
@@ -68,16 +66,6 @@ public class AngryPig : MonoBehaviour
                 animAngryPig.SetBool("hit1", false);
                 canAction = true;
             }
-
-            if (isColliderPLayer && canAction)
-            {
-                if (Time.time - lastDamageTime > 2f)
-                {
-                    PlayerController player = character.GetComponent<PlayerController>();
-                    player.beAttacked(attack_damage, amor_penetraction);
-                    lastDamageTime = Time.time;
-                }
-            }
             
             if(Vector2.Distance(transform.position, character.position) < 4f)
             {
@@ -93,6 +81,7 @@ public class AngryPig : MonoBehaviour
                 direction = (character.position - transform.position).normalized;
                 MoveNormalState();
             }
+            hitPlayer();
 
         }
     }
@@ -109,7 +98,11 @@ public class AngryPig : MonoBehaviour
         }
 
         rb.velocity = new Vector2(speed * direction.x, rb.velocity.y);
-        if(rb.velocity.x > 0)
+        if (Vector2.Distance(transform.position, character.position) < 0.7f)
+        {
+            rb.velocity = Vector2.zero;
+        }
+        if (rb.velocity.x > 0)
         {
             animAngryPig.SetInteger("StateNor", 1);
             spriteAngryPig.flipX = true;
@@ -139,23 +132,15 @@ public class AngryPig : MonoBehaviour
         currenthealth = Mathf.Clamp(currenthealth - (int)(attack * damagebetaken), 0, blood);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void hitPlayer()
     {
-        if (collision.gameObject.CompareTag("Player") && !isColliderPLayer)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.5f, LayerMask.GetMask("Player"));
+        if(hit.collider != null && Time.time - lastDamageTime > 2f)
         {
-            isColliderPLayer = true;
-            PlayerController player = character.GetComponent<PlayerController>();
-            player.beAttacked(attack_damage, amor_penetraction);
             lastDamageTime = Time.time;
+            PlayerController player = hit.collider.GetComponent<PlayerController>();
+            player.beAttack(attack_damage, amor_penetraction);
         }
     }
 
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            isColliderPLayer = false;
-        }
-    }
 }

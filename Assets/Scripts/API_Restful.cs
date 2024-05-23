@@ -22,8 +22,6 @@ public class API_Restful : MonoBehaviour
         StartCoroutine(getUp_level());
         StartCoroutine(getItem_Attached());
     }
-
-
     IEnumerator getFriend(string username)
     {
         string url = URL + "Friend?username=" + username;
@@ -84,14 +82,8 @@ public class API_Restful : MonoBehaviour
 
                 string json = request.downloadHandler.text;
                 SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Không tìm thấy túi đồ", "Ok");
-#endif
-                }
-                else
-                {
+                if (stats != null)
+                { 
                     Inventory.Instance.inventoryID = int.Parse(stats["inventoryID"]);
                     Inventory.Instance.username = stats["username"].ToString().Replace('"', ' ').Replace(" ", "");
                 }
@@ -123,10 +115,7 @@ public class API_Restful : MonoBehaviour
 
                 string json = request.downloadHandler.text;
                 SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-                }
-                else
+                if (stats != null)
                 {
                     for(int i = 0; i< stats.Count; i++)
                     {
@@ -206,13 +195,7 @@ public class API_Restful : MonoBehaviour
 
                 string json = request.downloadHandler.text;
                 SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Lỗi", "Ok");
-#endif
-                }
-                else
+                if (stats != null)
                 {
                     Property.Instance.propertyID = int.Parse(stats["propertyID"]);
                     Property.Instance.username = username;
