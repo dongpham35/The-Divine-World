@@ -9,6 +9,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using Photon.Realtime;
 
 public class MapController : MonoBehaviourPunCallbacks
 {
@@ -19,11 +20,13 @@ public class MapController : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text nameMap;
     [SerializeField] TMP_Text txtExp;
     [SerializeField] TMP_Text txtGold;
+
     private string namecharacter;
     private int characterIndex;
 
 
     private GameObject characterSpawned;
+
     private List<GameObject> SpawnAngryPigs = new List<GameObject>();
     private List<GameObject> SpawnChickens = new List<GameObject>();
     private int maxAngryPig = 4;
@@ -33,6 +36,12 @@ public class MapController : MonoBehaviourPunCallbacks
     private int oldGold;
 
     private AudioSource soundTrack;
+    private PhotonView view;
+
+    private void Awake()
+    {
+        view = GetComponent<PhotonView>();
+    }
     private void Start()
     {
         soundTrack = GetComponent<AudioSource>();
@@ -56,6 +65,7 @@ public class MapController : MonoBehaviourPunCallbacks
             characterIndex = 3;
         }
         characterSpawned = PhotonNetwork.Instantiate(characterPrefabs[characterIndex].name, new Vector2(-26, -4), Quaternion.identity);
+        
         if (PhotonNetwork.InRoom)
         {
             nameMap.text = PhotonNetwork.CurrentRoom.Name;
@@ -66,6 +76,10 @@ public class MapController : MonoBehaviourPunCallbacks
         StartCoroutine(SpawnChickenAfter10Seconds());
         StartCoroutine(ChangeText());
 
+        float volume = PlayerPrefs.GetFloat("volume");
+        AudioListener.volume = volume;
+        
+        
     }
 
 
@@ -168,12 +182,39 @@ public class MapController : MonoBehaviourPunCallbacks
         if (PhotonNetwork.InRoom)
         {
             Camera.main.transform.SetParent(null);
-            PhotonNetwork.LeaveRoom();
+            if(view.IsMine)
+            {
+                PhotonNetwork.LeaveRoom();
+            }
         }
     }
     public override void OnLeftRoom()
     {
+        if (view.IsMine)
+        {
+            if(PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.JoinLobby();
+            }
+            else
+            {
+                PhotonNetwork.ConnectUsingSettings();
+            }
+        }
+    }
+
+    public override void OnConnectedToMaster()
+    {
         SceneManager.LoadScene("MenuGame");
+    }
+
+    public override void OnJoinedLobby()
+    {
+        
+        if (view.IsMine)
+        {
+            SceneManager.LoadScene("MenuGame");
+        }
     }
     IEnumerator postAccountTable_gold(string username, int gold)
     {

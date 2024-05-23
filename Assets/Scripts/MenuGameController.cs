@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class MenuGameController : MonoBehaviourPunCallbacks
 {
@@ -16,6 +17,11 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     private static MenuGameController instance;
 
     public static MenuGameController Instance { get { return instance; } }
+
+    public TMP_Text txtContentChat;
+    public TMP_InputField ipfContentChat;
+
+    [SerializeField] private Slider musicSlider;
 
     [SerializeField] private Sprite[] avatars;
     [SerializeField] private Sprite[] imgItem;
@@ -58,12 +64,18 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     [SerializeField] private TMP_InputField ipfNameRoom;
     [SerializeField] private TMP_InputField ipfNameRoomPvP;
 
+    string nameMap = "";
+    string nameRoom = "";
+    RoomOptions option = new RoomOptions { MaxPlayers = 2 };
+
     private int sum_itemID_attached;
 
     private AudioSource soundTrack;
+    private PhotonView view;
 
     private void Awake()
     {
+        view = GetComponent<PhotonView>();
         if (Account.Instance.@class.Equals("air"))
         {
             avatar.sprite = avatars[0];
@@ -95,14 +107,27 @@ public class MenuGameController : MonoBehaviourPunCallbacks
         sum_itemID_attached = Item_Attached.Instance.item_attacheds.Sum();
         StartCoroutine(reLoadInventory());
         StartCoroutine(reLoadMenuGame());
+        PhotonNetwork.JoinOrCreateRoom("ChatRoom", new RoomOptions { MaxPlayers = 10 }, TypedLobby.Default);
+        if(view.IsMine)
+        {
+            PhotonNetwork.NickName = Account.Instance.username;
+        }
+
     }
 
     private void Start()
     {
         soundTrack = GetComponent<AudioSource>();
         soundTrack.Play();
+        LoadSetting();
     }
 
+    public void SetVolum()
+    {
+        float volume = musicSlider.value;
+        AudioListener.volume = volume;
+        PlayerPrefs.SetFloat("volume", volume);
+    }
     IEnumerator reLoadMenuGame()
     {
         while (true)
@@ -254,64 +279,110 @@ public class MenuGameController : MonoBehaviourPunCallbacks
 
     public void CreateMapPrimevalForestRoom()
     {
-        string nameMap = "Map 1 " + Account.Instance.username;
-        RoomOptions option = new RoomOptions { MaxPlayers = 2};
-        PhotonNetwork.CreateRoom(nameMap, option);
+        if(view.IsMine)
+        {
+            nameMap = "Map 1 " + Account.Instance.username;
+            PhotonNetwork.LeaveRoom();
+        }
     }
+
+    
 
     public void CreatePvPRoom()
     {
-        string nameRoom = Account.Instance.username;
-        RoomOptions option = new RoomOptions { MaxPlayers = 2 };
-        PhotonNetwork.CreateRoom(nameRoom, option);
+        if (view.IsMine)
+        {
+            nameRoom = Account.Instance.username;
+            PhotonNetwork.LeaveRoom();
+        }
     }
 
     public void JoinRoom()
     {
-        if(PhotonNetwork.InLobby)
+        if (PhotonNetwork.InRoom)
         {
-            if (panel_Map.activeSelf)
+            if (view.IsMine)
             {
-                PhotonNetwork.JoinRoom(ipfNameRoom.text);
-            }
-            else if (panel_PvP.activeSelf)
-            {
-                PhotonNetwork.JoinRoom(ipfNameRoomPvP.text);
+                if (panel_Map.activeSelf)
+                {
+                    nameMap = ipfNameRoom.text;
+                }
+                else if (panel_PvP.activeSelf)
+                {
+                    nameRoom = ipfNameRoomPvP.text;
+                }
+                PhotonNetwork.LeaveRoom();
             }
         }
-        else
+    }
+
+    public override void OnLeftRoom()
+    {
+        if (view.IsMine)
         {
-#if UNITY_EDITOR
-            EditorUtility.DisplayDialog("Thông báo", "Lỗi", "Ok");
-#endif
             PhotonNetwork.JoinLobby();
         }
-        
+    }
+
+    public override void OnConnectedToMaster()
+    {
+        PhotonNetwork.JoinLobby();
     }
 
     public override void OnJoinedLobby()
     {
-        base.OnJoinedLobby();
-        PhotonNetwork.LoadLevel("MenuGame");
+        if (view.IsMine)
+        {
+            if (!string.IsNullOrEmpty(nameMap))
+            {
+                PhotonNetwork.JoinOrCreateRoom(nameMap, option, TypedLobby.Default);
+            }
+            else if (!string.IsNullOrEmpty(nameRoom))
+            {
+                PhotonNetwork.JoinOrCreateRoom(nameRoom, option, TypedLobby.Default);
+            }
+        }
     }
-
-    public void LogOut()
-    {
-
-    }
-
-
     public override void OnJoinedRoom()
     {
-        if (panel_Map.activeSelf)
+        if (view.IsMine)
         {
-            PhotonNetwork.LoadLevel("Map");
-        }
-        else if (panel_PvP.activeSelf)
-        {
-            PhotonNetwork.LoadLevel("PvP");
+            Debug.Log(PhotonNetwork.CurrentRoom.Name);
+            if (!string.IsNullOrEmpty(nameMap))
+            {
+                SceneManager.LoadScene("Map");
+            }
+            else if (!string.IsNullOrEmpty(nameRoom))
+            {
+                SceneManager.LoadScene("PvP");
+            }
         }
     }
+    public void LogOut()
+    {
+        if(view.IsMine)
+        {
+            Account.Instance.username = "";
+            Account.Instance.avatar = "";
+            Account.Instance.email = "";
+            Account.Instance.password = "";
+            Account.Instance.gold = 0;
+            Account.Instance.levelID = 0;
+            Account.Instance.@class = "";
+            Account.Instance.experience_points = 0;
+            
+            PhotonNetwork.Disconnect();
+        }
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        if (view.IsMine)
+        {
+            SceneManager.LoadScene("SignIn");
+        }
+    }
+
 
     public void TurnOnInformation()
     {
@@ -332,6 +403,30 @@ public class MenuGameController : MonoBehaviourPunCallbacks
         panel_Setting.SetActive(false);
     }
 
-    
+    private void LoadSetting()
+    {
+
+        if (PlayerPrefs.HasKey("volume"))
+        {
+            float volume = PlayerPrefs.GetFloat("volume");
+            musicSlider.value = volume;
+            AudioListener.volume = volume;
+        }
+
+    }
+
+    public void SendMessageRealTime()
+    {
+        string message = PhotonNetwork.NickName + ": " + ipfContentChat.text + "\n";
+        photonView.RPC("SynchronizationMessage", RpcTarget.All, message);
+        ipfContentChat.text = "";
+
+    }
+
+    [PunRPC]
+    public void SynchronizationMessage(string message)
+    {
+        txtContentChat.text += message;
+    }
 
 }

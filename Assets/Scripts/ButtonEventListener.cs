@@ -56,7 +56,7 @@ public class ButtonEventListener : MonoBehaviour
                     else if (item.type.Equals("blood"))
                     {
                         Property.Instance.blood += item.value;
-                        StartCoroutine(postPropertyTable_blood(Property.Instance.username, Property.Instance.attack_damage));
+                        StartCoroutine(postPropertyTable_blood(Property.Instance.username, Property.Instance.blood));
                     }
                     else if (item.type.Equals("critical_rate"))
                     {
@@ -136,7 +136,7 @@ public class ButtonEventListener : MonoBehaviour
         else if (itemSelected.type.Equals("blood"))
         {
             Property.Instance.blood -= itemSelected.value;
-            StartCoroutine(postPropertyTable_blood(Property.Instance.username, Property.Instance.attack_damage));
+            StartCoroutine(postPropertyTable_blood(Property.Instance.username, Property.Instance.blood));
         }
         else if (itemSelected.type.Equals("critical_rate"))
         {
@@ -267,7 +267,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable_attackdamage(string username, int attack_damage)
     {
-        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&amor={attack_damage}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&attack_damage={attack_damage}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 
@@ -370,8 +370,7 @@ public class ButtonEventListener : MonoBehaviour
 
     IEnumerator postPropertyTable(string username, int blood, int attack_damage, int amor, int critical_rate, int speed, int amor_penetraction)
     {
-        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}" +
-            $"&critical_rate={critical_rate}&speed={speed}&amor_penetraction={amor_penetraction}";
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}&critical_rate={critical_rate}&speed={speed}&amor_penetraction={amor_penetraction}";
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
 

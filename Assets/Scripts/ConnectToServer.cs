@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using Assets.Scripts.Models;
+using Photon.Realtime;
 
 public class ConnectToServer : MonoBehaviourPunCallbacks
 {
@@ -18,7 +20,14 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        SceneManager.LoadScene("MenuGame");
+        if (string.IsNullOrEmpty(Account.Instance.@class))
+        {
+            SceneManager.LoadScene("NewSignIn");
+        }
+        else
+        {
+            SceneManager.LoadScene("MenuGame");
+        }
     }
 
 
