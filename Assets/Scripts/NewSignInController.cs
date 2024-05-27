@@ -84,6 +84,7 @@ public class NewSignInController : MonoBehaviour
             Account.Instance.levelID = 0;
             Account.Instance.@class = "fire";
             Account.Instance.experience_points = 0;
+            Account.Instance.level = 0;
         }
         StartCoroutine(postAccountTable(Account.Instance.username, Account.Instance.gold, Account.Instance.levelID, Account.Instance.@class, Account.Instance.experience_points));
     }
@@ -117,6 +118,7 @@ public class NewSignInController : MonoBehaviour
                     Debug.Log("Cap nhat thanh cong bang Account");
                     Up_level ul = Up_level.Instance.up_levels.FirstOrDefault(u => u.@class.Equals(Account.Instance.@class) && u.levelID == Account.Instance.levelID);
                     StartCoroutine(putPropertyTable(Account.Instance.username, ul.blood, ul.attack_damage, ul.amor, 0, ul.speed, 0));
+                    StartCoroutine(putItem_AttachedTable(Account.Instance.username));
                     SceneManager.LoadScene("MenuGame");
                 }
 
@@ -253,6 +255,98 @@ public class NewSignInController : MonoBehaviour
                     Property.Instance.critical_rate = int.Parse(stats["critical_rate"]);
                     Property.Instance.speed = int.Parse(stats["speed"]);
                     Property.Instance.amor_penetraction = int.Parse(stats["amor_penetraction"]);
+                }
+
+            }
+            request.Dispose();
+        }
+    }
+
+    IEnumerator getItem_Attached()
+    {
+        string URL = url + "Item_Attached?username=" + Account.Instance.username;
+        using (UnityWebRequest request = UnityWebRequest.Get(URL))
+        {
+
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+#if UNITY_EDITOR
+                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
+#endif
+            }
+            else
+            {
+
+                string json = request.downloadHandler.text;
+                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
+                if (stats == null)
+                {
+                }
+                else
+                {
+                    Item_Attached.Instance.item_attachedID = int.Parse(stats["item_attachedID"]);
+                    if (stats["itemID1"] != null)
+                    {
+                        Item_Attached.Instance.item_attacheds[0] = int.Parse(stats["itemID1"]);
+                    }
+                    if (stats["itemID2"] != null)
+                    {
+                        Item_Attached.Instance.item_attacheds[1] = int.Parse(stats["itemID2"]);
+                    }
+                    if (stats["itemID3"] != null)
+                    {
+                        Item_Attached.Instance.item_attacheds[2] = int.Parse(stats["itemID3"]);
+                    }
+                    if (stats["itemID4"] != null)
+                    {
+                        Item_Attached.Instance.item_attacheds[3] = int.Parse(stats["itemID4"]);
+                    }
+                    if (stats["itemID5"] != null)
+                    {
+                        Item_Attached.Instance.item_attacheds[4] = int.Parse(stats["itemID5"]);
+                    }
+                    if (stats["itemID6"] != null)
+                    {
+                        Item_Attached.Instance.item_attacheds[5] = int.Parse(stats["itemID6"]);
+                    }
+                    Item_Attached.Instance.num_item_attached = Item_Attached.Instance.item_attacheds.Where(i => i != 0f).ToList().Count;
+                    Item_Attached.Instance.username = Account.Instance.username;
+                }
+
+            }
+            request.Dispose();
+        }
+    }
+
+    IEnumerator putItem_AttachedTable(string username)
+    {
+        string URL = url + $"Item_Attached?username={username}";
+        using (UnityWebRequest request = UnityWebRequest.Put(URL, "Put"))
+        {
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Loi Inventory");
+#if UNITY_EDITOR
+                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
+#endif
+            }
+            else
+            {
+
+                string json = request.downloadHandler.text;
+                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
+                if (stats == null)
+                {
+#if UNITY_EDITOR
+                    EditorUtility.DisplayDialog("Thông báo", "Tên tài khoản không tồn tại", "Ok");
+#endif
+                }
+                else
+                {
+                    Debug.Log("Cap nhat thanh cong bang Item_attached");
+                    StartCoroutine(getItem_Attached());
                 }
 
             }

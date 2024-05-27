@@ -36,12 +36,7 @@ public class MapController : MonoBehaviourPunCallbacks
     private int oldGold;
 
     private AudioSource soundTrack;
-    private PhotonView view;
 
-    private void Awake()
-    {
-        view = GetComponent<PhotonView>();
-    }
     private void Start()
     {
         soundTrack = GetComponent<AudioSource>();
@@ -78,8 +73,6 @@ public class MapController : MonoBehaviourPunCallbacks
 
         float volume = PlayerPrefs.GetFloat("volume");
         AudioListener.volume = volume;
-        
-        
     }
 
 
@@ -174,7 +167,6 @@ public class MapController : MonoBehaviourPunCallbacks
         }
     }
 
-
     public void ReturnMenuGame()
     {
         StartCoroutine(postAccountTable_gold(Account.Instance.username, Account.Instance.gold));
@@ -182,24 +174,19 @@ public class MapController : MonoBehaviourPunCallbacks
         if (PhotonNetwork.InRoom)
         {
             Camera.main.transform.SetParent(null);
-            if(view.IsMine)
-            {
-                PhotonNetwork.LeaveRoom();
-            }
+            PhotonNetwork.LeaveRoom();
         }
     }
     public override void OnLeftRoom()
     {
-        if (view.IsMine)
+
+        if (PhotonNetwork.IsConnected)
         {
-            if(PhotonNetwork.IsConnected)
-            {
-                PhotonNetwork.JoinLobby();
-            }
-            else
-            {
-                PhotonNetwork.ConnectUsingSettings();
-            }
+            PhotonNetwork.JoinLobby();
+        }
+        else
+        {
+            PhotonNetwork.ConnectUsingSettings();
         }
     }
 
@@ -210,11 +197,7 @@ public class MapController : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        
-        if (view.IsMine)
-        {
-            SceneManager.LoadScene("MenuGame");
-        }
+        SceneManager.LoadScene("MenuGame");
     }
     IEnumerator postAccountTable_gold(string username, int gold)
     {

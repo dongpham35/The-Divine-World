@@ -291,14 +291,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (rb.velocity.x > .0f)
             {
                 isSpriterender = false;
-                photonView.RPC("changeRenderSprite", RpcTarget.OthersBuffered, isSpriterender);
                 state = anim.run;
                 direction.Set(1, 0, 0);
             }
             else if (rb.velocity.x < .0f)
             {
                 isSpriterender = true;
-                photonView.RPC("changeRenderSprite", RpcTarget.OthersBuffered, isSpriterender);
                 state = anim.run;
                 direction.Set(-1, 0, 0);
             }
@@ -548,13 +546,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void SendIdLoser(int id)
     {
         idLoser = id;
-        
-    }
-
-    [PunRPC]
-    public void changeRenderSprite(bool isFlipX)
-    {
-        isSpriterender = isFlipX;
     }
 
 

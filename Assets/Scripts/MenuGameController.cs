@@ -108,11 +108,23 @@ public class MenuGameController : MonoBehaviourPunCallbacks
         StartCoroutine(reLoadInventory());
         StartCoroutine(reLoadMenuGame());
         PhotonNetwork.JoinOrCreateRoom("ChatRoom", new RoomOptions { MaxPlayers = 10 }, TypedLobby.Default);
-        if(view.IsMine)
-        {
-            PhotonNetwork.NickName = Account.Instance.username;
-        }
-
+        PhotonNetwork.NickName = Account.Instance.username;
+            if(Mathf.Pow(2, Account.Instance.level+1) < Account.Instance.experience_points)
+            {
+                int level = Account.Instance.level + 1;
+                while(Mathf.Pow(2, level) < Account.Instance.experience_points)
+                {
+                    Up_level up = Up_level.Instance.up_levels.FirstOrDefault(ul => ul.@class.Equals(Account.Instance.@class) && ul.levelID == level);
+                    Property.Instance.blood += up.blood;
+                    Property.Instance.speed += up.speed;
+                    Property.Instance.amor += up.amor;
+                    Property.Instance.attack_damage += up.attack_damage;
+                    StartCoroutine(postPropertyTable(Account.Instance.username, Property.Instance.blood, Property.Instance.attack_damage, Property.Instance.amor,
+                        Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
+                    level++;
+                }
+                Account.Instance.level = level-1;
+            }
     }
 
     private void Start()
@@ -279,49 +291,52 @@ public class MenuGameController : MonoBehaviourPunCallbacks
 
     public void CreateMapPrimevalForestRoom()
     {
-        if(view.IsMine)
-        {
-            nameMap = "Map 1 " + Account.Instance.username;
-            PhotonNetwork.LeaveRoom();
-        }
+        nameMap = "Map 1 " + Account.Instance.username;
+        PhotonNetwork.LeaveRoom();
     }
-
-    
 
     public void CreatePvPRoom()
     {
-        if (view.IsMine)
-        {
-            nameRoom = Account.Instance.username;
-            PhotonNetwork.LeaveRoom();
-        }
+        nameRoom = Account.Instance.username;
+        PhotonNetwork.LeaveRoom();
     }
 
     public void JoinRoom()
     {
         if (PhotonNetwork.InRoom)
         {
-            if (view.IsMine)
-            {
                 if (panel_Map.activeSelf)
                 {
+                    nameRoom = "";
                     nameMap = ipfNameRoom.text;
                 }
                 else if (panel_PvP.activeSelf)
                 {
+                    nameMap = "";
                     nameRoom = ipfNameRoomPvP.text;
                 }
                 PhotonNetwork.LeaveRoom();
-            }
+        }
+        else
+        {
+                if (panel_Map.activeSelf)
+                {
+                    nameRoom = "";
+                    nameMap = ipfNameRoom.text;
+                    PhotonNetwork.JoinOrCreateRoom(nameMap, option, TypedLobby.Default);
+                }
+                else if (panel_PvP.activeSelf)
+                {
+                    nameMap = "";
+                    nameRoom = ipfNameRoomPvP.text;
+                    PhotonNetwork.JoinOrCreateRoom(nameRoom, new RoomOptions { MaxPlayers = 2 }, TypedLobby.Default);
+                }
         }
     }
 
     public override void OnLeftRoom()
     {
-        if (view.IsMine)
-        {
-            PhotonNetwork.JoinLobby();
-        }
+            PhotonNetwork.JoinLobby(TypedLobby.Default);
     }
 
     public override void OnConnectedToMaster()
@@ -331,37 +346,29 @@ public class MenuGameController : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        if (view.IsMine)
-        {
-            if (!string.IsNullOrEmpty(nameMap))
+            if (panel_Map.activeSelf)
             {
                 PhotonNetwork.JoinOrCreateRoom(nameMap, option, TypedLobby.Default);
             }
-            else if (!string.IsNullOrEmpty(nameRoom))
+            else if (panel_PvP.activeSelf)
             {
-                PhotonNetwork.JoinOrCreateRoom(nameRoom, option, TypedLobby.Default);
+                PhotonNetwork.JoinOrCreateRoom(nameRoom, new RoomOptions { MaxPlayers = 2}, TypedLobby.Default);
             }
-        }
     }
     public override void OnJoinedRoom()
     {
-        if (view.IsMine)
-        {
+            if (panel_Map.activeSelf)
+            {
+                PhotonNetwork.LoadLevel("Map");
+            }
+            else if (panel_PvP.activeSelf)
+            {
+                PhotonNetwork.LoadLevel("PvP");
+            }
             Debug.Log(PhotonNetwork.CurrentRoom.Name);
-            if (!string.IsNullOrEmpty(nameMap))
-            {
-                SceneManager.LoadScene("Map");
-            }
-            else if (!string.IsNullOrEmpty(nameRoom))
-            {
-                SceneManager.LoadScene("PvP");
-            }
-        }
     }
     public void LogOut()
     {
-        if(view.IsMine)
-        {
             Account.Instance.username = "";
             Account.Instance.avatar = "";
             Account.Instance.email = "";
@@ -370,17 +377,25 @@ public class MenuGameController : MonoBehaviourPunCallbacks
             Account.Instance.levelID = 0;
             Account.Instance.@class = "";
             Account.Instance.experience_points = 0;
-            
+            Account.Instance.level = 0;
+            Friend.Instance.friends.Clear();
+            Inventory.Instance.inventoryID = 0;
+            Inventory_Item.Instance.items.Clear();
+            Item_Attached.Instance.item_attacheds[0] = 0;
+            Item_Attached.Instance.item_attacheds[1] = 0;
+            Item_Attached.Instance.item_attacheds[2] = 0;
+            Item_Attached.Instance.item_attacheds[3] = 0;
+            Item_Attached.Instance.item_attacheds[4] = 0;
+            Item_Attached.Instance.item_attacheds[5] = 0;
+            Item.Instance.items.Clear();
+
+
             PhotonNetwork.Disconnect();
-        }
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        if (view.IsMine)
-        {
             SceneManager.LoadScene("SignIn");
-        }
     }
 
 
@@ -428,5 +443,24 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     {
         txtContentChat.text += message;
     }
+    IEnumerator postPropertyTable(string username, int blood, int attack_damage, int amor, int critical_rate, int speed, int amor_penetraction)
+    {
+        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}&critical_rate={critical_rate}&speed={speed}&amor_penetraction={amor_penetraction}";
+        using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
+        {
 
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+#if UNITY_EDITOR
+                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
+#endif
+            }
+            else
+            {
+                Debug.Log("Cap nhat thanh cong bang Property");
+            }
+            request.Dispose();
+        }
+    }
 }

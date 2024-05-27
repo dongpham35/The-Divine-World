@@ -8,27 +8,64 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
+using System.Linq;
+using System;
 
-public class LogIn : MonoBehaviour
+public class LogIn : MonoBehaviourPunCallbacks
 {
     public TMP_InputField usernameInputField;
     public TMP_InputField passwordInputField;
+    public GameObject panel_loading;
 
     private string username;
     private string password;
-    private string URL;
+    private string URL = "http://localhost/TheDiVWorld/api/";
     private AudioSource soundTrack;
 
     private void Start()
     {
+        
+        if (PhotonNetwork.InLobby)
+        {
+            panel_loading.SetActive(false);
+        }
+        else
+        {
+            PhotonNetwork.ConnectUsingSettings();
+            panel_loading.SetActive(true);
+        }
         soundTrack = GetComponent<AudioSource>();
         soundTrack.Play();
+        if (PlayerPrefs.HasKey("volume"))
+        {
+            float volume = PlayerPrefs.GetFloat("volume");
+            AudioListener.volume = volume;
+        }
+    }
+
+    public override void OnConnectedToMaster()
+    {
+        panel_loading.SetActive(false);
+        PhotonNetwork.JoinLobby();
     }
     public void SignIn()
     {
+        foreach(var i in PhotonNetwork.PlayerList)
+        {
+            Debug.Log("Nick name: " + i.NickName);
+        }
+        Player player = PhotonNetwork.PlayerList.FirstOrDefault(p => p.NickName.Equals(usernameInputField.text));
+        if(player != null)
+        {
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("Thong bao", "Tai khoan da dang nhap tai noi khac", "Oke");
+#endif
+            return;
+        }
         username = usernameInputField.text;
         password = passwordInputField.text;
-        URL = "http://localhost/TheDiVWorld/api/Account?username=" + username;
         StartCoroutine(SendLoginRequest());
     }
     public void SingUp()
@@ -37,7 +74,8 @@ public class LogIn : MonoBehaviour
     }
     IEnumerator SendLoginRequest()
     {
-        using(UnityWebRequest request = UnityWebRequest.Get(URL))
+        string url = URL + "Account?username=" + username;
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
             yield return request.SendWebRequest();
             if(request.result != UnityWebRequest.Result.Success)
@@ -70,7 +108,8 @@ public class LogIn : MonoBehaviour
                         Account.Instance.levelID = int.Parse(stats["levelID"]);
                         Account.Instance.@class = stats["class"].ToString().Replace('"', ' ').Replace(" ", "");
                         Account.Instance.experience_points = int.Parse(stats["experience_points"]);
-                        SceneController.Instance.MoveToLoading();
+                        Account.Instance.level = LargestPower(Account.Instance.experience_points);
+                        SceneManager.LoadScene("Loading"); 
                     }
                     else
                     {
@@ -84,4 +123,15 @@ public class LogIn : MonoBehaviour
             request.Dispose();
         }
     }
+    public static int LargestPower(int n)
+    {
+        n |= (n >> 1);
+        n |= (n >> 2);
+        n |= (n >> 4);
+        n |= (n >> 8);
+        n |= (n >> 16);
+        return n - (n >> 1);
+    }
+
+
 }
