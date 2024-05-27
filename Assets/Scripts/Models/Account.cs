@@ -24,7 +24,7 @@ namespace Assets.Scripts.Models
         public int gold { get; set; }
         public int levelID { get; set; }
         public string @class { get; set; }
-
+        public int level { get; set; }
         public int experience_points { get; set; }
 
     }

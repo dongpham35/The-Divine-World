@@ -24,7 +24,6 @@ public class PvPController : MonoBehaviourPunCallbacks
     private  GameObject player;
 
     private AudioSource soundTrack;
-    private PhotonView view;
 
     private void Start()
     {
@@ -45,7 +44,6 @@ public class PvPController : MonoBehaviourPunCallbacks
         }
         float volume = PlayerPrefs.GetFloat("volume");
         AudioListener.volume = volume;
-        view = GetComponent<PhotonView>();
     }
 
     public void TurnOnExit()
@@ -64,8 +62,6 @@ public class PvPController : MonoBehaviourPunCallbacks
     }
     public override void OnLeftRoom()
     {
-        if (view.IsMine)
-        {
             if (PhotonNetwork.IsConnected)
             {
                 PhotonNetwork.JoinLobby();
@@ -74,7 +70,6 @@ public class PvPController : MonoBehaviourPunCallbacks
             {
                 PhotonNetwork.ConnectUsingSettings();
             }
-        }
     }
 
     public override void OnConnectedToMaster()
@@ -84,10 +79,7 @@ public class PvPController : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        if (view.IsMine)
-        {
             SceneManager.LoadScene("MenuGame");
-        }
     }
 
     public void btnCancle()

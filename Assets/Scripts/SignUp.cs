@@ -28,6 +28,11 @@ public class SignUp : MonoBehaviour
     {
         soundTrack = GetComponent<AudioSource>();
         soundTrack.Play();
+        if (PlayerPrefs.HasKey("volume"))
+        {
+            float volume = PlayerPrefs.GetFloat("volume");
+            AudioListener.volume = volume;
+        }
     }
 
 

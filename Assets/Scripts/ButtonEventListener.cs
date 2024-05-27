@@ -14,82 +14,86 @@ public class ButtonEventListener : MonoBehaviour
 {
     public void AttachedItem()
     {
-        if (Item_Attached.Instance.num_item_attached == 6)
+        var itemName_selected = GetComponentInChildren<TMP_Text>().text;
+        var item = Item.Instance.items.FirstOrDefault(i => i.name.Equals(itemName_selected));
+        Inventory_Item item_Selected = Inventory_Item.Instance.items.FirstOrDefault(i => i.itemID == item.itemID);
+        if (item.type.Equals("weapon"))
         {
-#if UNITY_EDITOR
-            EditorUtility.DisplayDialog("Thông báo", "Không thể mặc thêm đồ", "Ok");
-#endif
+            item_Selected.quality--;
+            Property.Instance.blood += item.value;
+            Property.Instance.attack_damage += item.value;
+            Property.Instance.amor += item.value;
+            Property.Instance.speed += item.value;
+            Property.Instance.amor_penetraction = Mathf.Clamp(Property.Instance.amor_penetraction + item.value, 0, 50);
+            Property.Instance.critical_rate = Mathf.Clamp(Property.Instance.critical_rate + item.value, 0, 100);
+            StartCoroutine(postPropertyTable(Property.Instance.username, Property.Instance.blood, Property.Instance.attack_damage,
+                Property.Instance.amor, Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
         }
         else
         {
-            for (int i = 0; i < Item_Attached.Instance.item_attacheds.Count; i++)
+            if (Item_Attached.Instance.num_item_attached == 6)
             {
-                if (Item_Attached.Instance.item_attacheds[i] == 0)
-                {
-                    var itemName_selected = GetComponentInChildren<TMP_Text>().text;
-                    var item = Item.Instance.items.FirstOrDefault(i => i.name.Equals(itemName_selected));
-                    Inventory_Item item_Selected = Inventory_Item.Instance.items.FirstOrDefault(i => i.itemID == item.itemID);
-                    item_Selected.quality--;
-                    Item_Attached.Instance.item_attacheds[i] = item.itemID;
-                    if (item_Selected.quality == 0)
-                    {
-                        StartCoroutine(deleteInventoryItemTable(item_Selected.inventoryID, item_Selected.itemID));
-                    }
-                    else
-                    {
-                        StartCoroutine(postIventoryItemTable(item_Selected.inventoryID, item_Selected.itemID, item_Selected.quality));
-                    }
-                    StartCoroutine(postItemAttachedTable(Item_Attached.Instance.username, Item_Attached.Instance.item_attacheds[0],
-                        Item_Attached.Instance.item_attacheds[1], Item_Attached.Instance.item_attacheds[2], Item_Attached.Instance.item_attacheds[3]
-                        , Item_Attached.Instance.item_attacheds[4], Item_Attached.Instance.item_attacheds[5]));
-
-                    if (item.type.Equals("amor"))
-                    {
-                        Property.Instance.amor += item.value;
-                        StartCoroutine(postPropertyTable_amor(Property.Instance.username, Property.Instance.amor));
-                    }
-                    else if (item.type.Equals("attack"))
-                    {
-                        Property.Instance.attack_damage += item.value;
-                        StartCoroutine(postPropertyTable_attackdamage(Property.Instance.username, Property.Instance.attack_damage));
-                    }
-                    else if (item.type.Equals("blood"))
-                    {
-                        Property.Instance.blood += item.value;
-                        StartCoroutine(postPropertyTable_blood(Property.Instance.username, Property.Instance.blood));
-                    }
-                    else if (item.type.Equals("critical_rate"))
-                    {
-                        Property.Instance.critical_rate = Mathf.Clamp(Property.Instance.critical_rate + item.value, 0, 100);
-                        StartCoroutine(postPropertyTable_criticalrate(Property.Instance.username, Property.Instance.critical_rate));
-                    }
-                    else if (item.type.Equals("speed"))
-                    {
-                        Property.Instance.speed += item.value;
-                        StartCoroutine(postPropertyTable_speed(Property.Instance.username, Property.Instance.speed));
-                    }
-                    else if (item.type.Equals("amor_penetraction"))
-                    {
-                        Property.Instance.amor_penetraction = Mathf.Clamp(Property.Instance.amor_penetraction + item.value, 0, 50);
-                        StartCoroutine(postPropertyTable_amorpenetraction(Property.Instance.username, Property.Instance.amor_penetraction));
-                    }
-                    else if (item.type.Equals("weapon"))
-                    {
-                        Property.Instance.blood += item.value;
-                        Property.Instance.attack_damage += item.value;
-                        Property.Instance.amor += item.value;
-                        Property.Instance.speed += item.value;
-                        Property.Instance.amor_penetraction = Mathf.Clamp(Property.Instance.amor_penetraction + item.value, 0, 50);
-                        Property.Instance.critical_rate = Mathf.Clamp(Property.Instance.critical_rate + item.value, 0, 100);
-                        StartCoroutine(postPropertyTable(Property.Instance.username, Property.Instance.blood, Property.Instance.attack_damage,
-                            Property.Instance.amor, Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
-                    }
-                    break;
-                }
+#if UNITY_EDITOR
+                EditorUtility.DisplayDialog("Thông báo", "Không thể mặc thêm đồ", "Ok");
+#endif
             }
-            Item_Attached.Instance.num_item_attached++;
+            else
+            {
+                for (int i = 0; i < Item_Attached.Instance.item_attacheds.Count; i++)
+                {
+                    if (Item_Attached.Instance.item_attacheds[i] == 0)
+                    {
+                        item_Selected.quality--;
+                        Item_Attached.Instance.item_attacheds[i] = item.itemID;
+                        StartCoroutine(postItemAttachedTable(Item_Attached.Instance.username, Item_Attached.Instance.item_attacheds[0],
+                            Item_Attached.Instance.item_attacheds[1], Item_Attached.Instance.item_attacheds[2], Item_Attached.Instance.item_attacheds[3]
+                            , Item_Attached.Instance.item_attacheds[4], Item_Attached.Instance.item_attacheds[5]));
+
+                        if (item.type.Equals("amor"))
+                        {
+                            Property.Instance.amor += item.value;
+                            StartCoroutine(postPropertyTable_amor(Property.Instance.username, Property.Instance.amor));
+                        }
+                        else if (item.type.Equals("attack"))
+                        {
+                            Property.Instance.attack_damage += item.value;
+                            StartCoroutine(postPropertyTable_attackdamage(Property.Instance.username, Property.Instance.attack_damage));
+                        }
+                        else if (item.type.Equals("blood"))
+                        {
+                            Property.Instance.blood += item.value;
+                            StartCoroutine(postPropertyTable_blood(Property.Instance.username, Property.Instance.blood));
+                        }
+                        else if (item.type.Equals("critical_rate"))
+                        {
+                            Property.Instance.critical_rate = Mathf.Clamp(Property.Instance.critical_rate + item.value, 0, 100);
+                            StartCoroutine(postPropertyTable_criticalrate(Property.Instance.username, Property.Instance.critical_rate));
+                        }
+                        else if (item.type.Equals("speed"))
+                        {
+                            Property.Instance.speed += item.value;
+                            StartCoroutine(postPropertyTable_speed(Property.Instance.username, Property.Instance.speed));
+                        }
+                        else if (item.type.Equals("amor_penetraction"))
+                        {
+                            Property.Instance.amor_penetraction = Mathf.Clamp(Property.Instance.amor_penetraction + item.value, 0, 50);
+                            StartCoroutine(postPropertyTable_amorpenetraction(Property.Instance.username, Property.Instance.amor_penetraction));
+                        }
+                        break;
+                    }
+                }
+                Item_Attached.Instance.num_item_attached++;
+            }
         }
 
+        if (item_Selected.quality == 0)
+        {
+            StartCoroutine(deleteInventoryItemTable(item_Selected.inventoryID, item_Selected.itemID));
+        }
+        else
+        {
+            StartCoroutine(postIventoryItemTable(item_Selected.inventoryID, item_Selected.itemID, item_Selected.quality));
+        }
     }
 
     public void UnAttachedItem()
@@ -98,6 +102,7 @@ public class ButtonEventListener : MonoBehaviour
         int slot_selected = Convert.ToInt16(name_slot_selected[name_slot_selected.Length - 1].ToString());
         
         int itemID_selected = Item_Attached.Instance.item_attacheds[slot_selected-1];
+        if (itemID_selected == 0) return;
         Item_Attached.Instance.item_attacheds[slot_selected-1] = 0;
         Item_Attached.Instance.num_item_attached--;
         Inventory_Item item = Inventory_Item.Instance.items.FirstOrDefault(i => i.itemID == itemID_selected);

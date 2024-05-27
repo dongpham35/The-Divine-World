@@ -192,6 +192,7 @@ MonoBehaviour:
   currentHealth: 0
   gold: 0
   exp: 0
+  numOfElement: 0
 --- !u!114 &1809334935862659812
 MonoBehaviour:
   m_ObjectHideFlags: 0
