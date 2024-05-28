@@ -853,6 +853,7 @@ MonoBehaviour:
   currentHealth: 0
   gold: 0
   exp: 0
+  numOfElement: 0
 --- !u!95 &7042383044145313633
 Animator:
   serializedVersion: 5
@@ -895,6 +896,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: -3389933200625141236}
   - {fileID: 8380510595717804838}
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

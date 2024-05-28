@@ -52,6 +52,7 @@ public class MenuGameController : MonoBehaviourPunCallbacks
 
     //Property of player in inventory
     [Header("property of player in inventory")]
+    [SerializeField] private TMP_Text txtLevel;
     [SerializeField] private Image img_character;
     [SerializeField] private TMP_Text blood;
     [SerializeField] private TMP_Text damage;
@@ -119,12 +120,12 @@ public class MenuGameController : MonoBehaviourPunCallbacks
                     Property.Instance.speed += up.speed;
                     Property.Instance.amor += up.amor;
                     Property.Instance.attack_damage += up.attack_damage;
-                    StartCoroutine(postPropertyTable(Account.Instance.username, Property.Instance.blood, Property.Instance.attack_damage, Property.Instance.amor,
-                        Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
                     level++;
                 }
                 Account.Instance.level = level-1;
-            }
+            StartCoroutine(postPropertyTable(Account.Instance.username, Property.Instance.blood, Property.Instance.attack_damage, Property.Instance.amor,
+                        Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
+        }
     }
 
     private void Start()
@@ -153,7 +154,8 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     public void TurnOnInventory()
     {
         panel_inventory.SetActive(true);
-        
+
+        txtLevel.text = "Level: " + Account.Instance.level;
         blood.text = "Máu: " + Property.Instance.blood.ToString();
         damage.text = "Stvl: " + Property.Instance.attack_damage.ToString();
         amor.text = "Giáp: " + Property.Instance.amor.ToString();
@@ -249,6 +251,7 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     {
         while (true)
         {
+            txtLevel.text = "Level: " + Account.Instance.level;
             blood.text = "Máu: " + Property.Instance.blood.ToString();
             damage.text = "Stvl: " + Property.Instance.attack_damage.ToString();
             amor.text = "Giáp: " + Property.Instance.amor.ToString();
@@ -365,7 +368,6 @@ public class MenuGameController : MonoBehaviourPunCallbacks
             {
                 PhotonNetwork.LoadLevel("PvP");
             }
-            Debug.Log(PhotonNetwork.CurrentRoom.Name);
     }
     public void LogOut()
     {

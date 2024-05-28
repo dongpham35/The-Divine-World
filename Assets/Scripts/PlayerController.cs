@@ -316,6 +316,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
             
             spriRender_Player.flipX = isSpriterender;
+            if (PhotonNetwork.InRoom)
+            {
+                photonView.RPC("flipX", RpcTarget.OthersBuffered, isSpriterender);
+            }
             animator_Player.SetInteger("StateNor", (int)state);
             animator_Player.SetBool("BeAttacked", isBeAttacked);
         }
@@ -408,11 +412,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     }
                     if (enemy.currentHealth == 0)
                     {
-                        Account.Instance.gold += 3;
-                        Account.Instance.experience_points += 5;
-                        StartCoroutine(postAccountTable_exp(Account.Instance.username, Account.Instance.experience_points));
-                        StartCoroutine(postAccountTable_gold(Account.Instance.username, Account.Instance.gold));
-                        panel_finish.SetActive(true);
+                        Gift();
                     }
                 }
 
@@ -462,7 +462,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     }
 
-
+    public void Gift()
+    {
+        if(view.IsMine)
+        {
+            Account.Instance.gold += 3;
+            Account.Instance.experience_points += 5;
+            StartCoroutine(postAccountTable_exp(Account.Instance.username, Account.Instance.experience_points));
+            StartCoroutine(postAccountTable_gold(Account.Instance.username, Account.Instance.gold));
+            panel_finish.SetActive(true);
+        }
+    }
     
 
     public void beAttack(int damage, int am_penetraction)
@@ -517,7 +527,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 RaycastHit2D hit4 = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.8f, LayerMask.GetMask("Player"));
                 if (hit4.collider != null)
                 {
-                    hit4.transform.position += direction * 0.7f;
+                    hit4.transform.position += (direction * 0.7f);
                 }
             }
             else
@@ -546,6 +556,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void SendIdLoser(int id)
     {
         idLoser = id;
+    }
+
+    [PunRPC]
+    public void flipX(bool state)
+    {
+        SpriteRenderer sp = GetComponent<SpriteRenderer>();
+        sp.flipX = state; 
     }
 
 

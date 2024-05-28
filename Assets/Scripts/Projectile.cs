@@ -9,9 +9,8 @@ public class Projectile : MonoBehaviour
     private Rigidbody2D rb;
     private float lastFireTime;
     private int damageSkill;
-    private float damageSkill_rate;
-
-    public int attack, am_penetraction;
+    private float damage_rate;
+    public int attack, am_penetraction, NoE;
 
 
     private void Awake()
@@ -59,7 +58,15 @@ public class Projectile : MonoBehaviour
         if (collision.gameObject.CompareTag("Player") && !PhotonNetwork.CurrentRoom.Name.Contains("Map"))
         {
             PlayerController enemy = collision.collider.GetComponent<PlayerController>();
-            enemy.beAttack(damageSkill, am_penetraction);
+            if(NoE * enemy.numOfElement < 0)
+            {
+                damage_rate = 1.4f;
+            }
+            else
+            {
+                damage_rate = 1;
+            }
+            enemy.beAttack((int)(damageSkill * damage_rate), am_penetraction);
             Destroy(gameObject);
         }
 
