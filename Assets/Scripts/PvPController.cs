@@ -22,6 +22,7 @@ public class PvPController : MonoBehaviourPunCallbacks
     private Vector2 point2 = new Vector2(4f, -3.5f);
 
     private  GameObject player;
+    private int countPlayer;
 
     private AudioSource soundTrack;
 
@@ -44,6 +45,21 @@ public class PvPController : MonoBehaviourPunCallbacks
         }
         float volume = PlayerPrefs.GetFloat("volume");
         AudioListener.volume = volume;
+    }
+
+    private void Update()
+    {
+        if(PhotonNetwork.InRoom)
+        {
+            if (countPlayer == 2)
+            {
+                if (GameObject.FindGameObjectsWithTag("Player").Length != 2)
+                {
+                    GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().Gift();
+                }
+            }
+            countPlayer = GameObject.FindGameObjectsWithTag("Player").Length;
+        }
     }
 
     public void TurnOnExit()

@@ -11,7 +11,7 @@ public class Chicken : MonoBehaviour
 
     [Header("property of the Chicken")]
     [SerializeField] private int blood = 15;
-    [SerializeField] private int attack_damage = 5;
+    [SerializeField] private int attack_damage = 1;
     [SerializeField] private int amor = 3;
     [SerializeField] private int speed = 4;
     [SerializeField] private int critical_rate = 0;

@@ -125,13 +125,7 @@ public class LogIn : MonoBehaviourPunCallbacks
     }
     public static int LargestPower(int n)
     {
-        n |= (n >> 1);
-        n |= (n >> 2);
-        n |= (n >> 4);
-        n |= (n >> 8);
-        n |= (n >> 16);
-        return n - (n >> 1);
+        if (n == 0) return 0;
+        return (int)Mathf.Floor(Mathf.Log(n, 2));
     }
-
-
 }

@@ -116,7 +116,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &134845139001293988
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -171,6 +171,7 @@ MonoBehaviour:
   currentHealth: 0
   gold: 0
   exp: 0
+  numOfElement: 0
 --- !u!95 &134845139001293986
 Animator:
   serializedVersion: 5
