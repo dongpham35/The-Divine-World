@@ -160,6 +160,7 @@ MonoBehaviour:
   powerBar: {fileID: 4851534892125600593}
   panel_finish: {fileID: 1149016257502475846}
   cam: {fileID: 6935215115483601734, guid: ad262df5fb3a8ff4bbc4ee8d17033590, type: 3}
+  txtDamageTaken: {fileID: 8056816348127988500, guid: ddbd9123380b9ae4896071a5afe1741e, type: 3}
   cooldownHit1: 0
   cooldownHit2: 0
   cooldownHit3: 0

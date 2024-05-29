@@ -181,6 +181,7 @@ MonoBehaviour:
   powerBar: {fileID: 8379017291559679041}
   panel_finish: {fileID: 6091736422877371633}
   cam: {fileID: 6935215115483601734, guid: ad262df5fb3a8ff4bbc4ee8d17033590, type: 3}
+  txtDamageTaken: {fileID: 8056816348127988500, guid: ddbd9123380b9ae4896071a5afe1741e, type: 3}
   cooldownHit1: 0
   cooldownHit2: 0
   cooldownHit3: 0
@@ -214,7 +215,6 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: -5355095127747004061}
   - {fileID: -6834634486385648604}
-  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

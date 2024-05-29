@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c266363014f9c564791ba200abbada62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 0}
+  characters: []
   blood: 20
   attack_damage: 10
   amor: 10
