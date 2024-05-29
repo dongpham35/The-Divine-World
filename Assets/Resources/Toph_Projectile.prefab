@@ -173,6 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attack: 0
   am_penetraction: 0
+  NoE: 0
 --- !u!114 &2443837847158888226
 MonoBehaviour:
   m_ObjectHideFlags: 0

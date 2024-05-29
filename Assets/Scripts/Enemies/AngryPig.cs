@@ -1,12 +1,15 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class AngryPig : MonoBehaviour
 {
-    public Transform character;
+    public List<GameObject> characters;
+    private GameObject character;
     private bool isSeeplayer = false;
 
     [Header("property of the angry pig")]
@@ -16,8 +19,8 @@ public class AngryPig : MonoBehaviour
     [SerializeField] private int speed = 5;
     [SerializeField] private int critical_rate = 0;
     [SerializeField] private int amor_penetraction = 0;
-    public int gold = 3;
-    public int experience_point = 5;
+    public int gold = 2;
+    public int experience_point = 3;
 
     private Animator animAngryPig;
     private SpriteRenderer spriteAngryPig;
@@ -40,34 +43,61 @@ public class AngryPig : MonoBehaviour
         view = GetComponent<PhotonView>();
         rb = GetComponent<Rigidbody2D>();
 
-        if(character == null)
+        if (characters.Count == 0)
         {
-            character = GameObject.FindGameObjectWithTag("Player").transform;
+            characters = GameObject.FindGameObjectsWithTag("Player").ToList();
         }
         currenthealth = blood;
-        
         canAction = true;
 
         direction = new Vector3(1, 0, 0);
+    }
+
+    private void checkDistance()
+    {
+        float distance = 0f;
+        foreach (var ch in characters)
+        {
+            if (view.IsMine)
+            {
+                if (distance == 0)
+                {
+                    distance = Vector2.Distance(transform.position, ch.transform.position);
+                    character = ch;
+                    continue;
+                }
+                if (distance > Vector2.Distance(transform.position, ch.transform.position))
+                {
+                    distance = Vector2.Distance(transform.position, ch.transform.position);
+                    character = ch;
+                }
+            }
+        }
     }
 
     private void Update()
     {
         if (view.IsMine)
         {
+            if (character == null)
+            {
+                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
+            }
+            checkDistance();
             if (currenthealth == 0)
             {
-                animAngryPig.SetBool("hit2", true);
+                animAngryPig.SetBool("hit1", true);
                 Destroy(gameObject);
             }
 
-            if(Time.time - lastbedamage > 1f)
+            if (Time.time - lastbedamage > 1f)
             {
                 animAngryPig.SetBool("hit1", false);
                 canAction = true;
             }
-            
-            if(Vector2.Distance(transform.position, character.position) < 4f)
+
+
+            if (Vector2.Distance(transform.position, character.transform.position) < 2f)
             {
                 isSeeplayer = true;
             }
@@ -77,28 +107,28 @@ public class AngryPig : MonoBehaviour
             }
             else
             {
-                
-                direction = (character.position - transform.position).normalized;
+
+                direction = (character.transform.position - transform.position).normalized;
                 MoveNormalState();
             }
             hitPlayer();
-
         }
     }
 
     private void MoveNormalState()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.1f, direction, 0.7f, LayerMask.GetMask("Ground"));
-        if(hit.collider != null && isSeeplayer)
+        if (hit.collider != null && isSeeplayer)
         {
             rb.velocity = new Vector2(rb.velocity.x * 1.2f, speed * 2.3f);
-        }else if (hit.collider != null && !isSeeplayer)
+        }
+        else if (hit.collider != null && !isSeeplayer)
         {
             direction = -direction;
         }
 
         rb.velocity = new Vector2(speed * direction.x, rb.velocity.y);
-        if (Vector2.Distance(transform.position, character.position) < 0.7f)
+        if (Vector2.Distance(transform.position, character.transform.position) < 0.7f)
         {
             rb.velocity = Vector2.zero;
         }
@@ -106,7 +136,8 @@ public class AngryPig : MonoBehaviour
         {
             animAngryPig.SetInteger("StateNor", 1);
             spriteAngryPig.flipX = true;
-        }else if(rb.velocity.x < 0)
+        }
+        else if (rb.velocity.x < 0)
         {
             animAngryPig.SetInteger("StateNor", 1);
             spriteAngryPig.flipX = false;
@@ -119,12 +150,13 @@ public class AngryPig : MonoBehaviour
         {
             animAngryPig.SetInteger("StateNor", 2);
         }
+
     }
 
 
     public void beAttacked(int attack, int am_penetraction)
     {
-        int AmorAfterPenetraction = amor * ( 1 - am_penetraction / 100);
+        int AmorAfterPenetraction = amor * (1 - am_penetraction / 100);
         damagebetaken = (float)(1 - 0.99 * AmorAfterPenetraction / (AmorAfterPenetraction + 60));
         canAction = false;
         lastbedamage = Time.time;
@@ -134,13 +166,12 @@ public class AngryPig : MonoBehaviour
 
     private void hitPlayer()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.5f, LayerMask.GetMask("Player"));
-        if(hit.collider != null && Time.time - lastDamageTime > 2f)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.3f, LayerMask.GetMask("Player"));
+        if (hit.collider != null && Time.time - lastDamageTime > 1.5f)
         {
-            lastDamageTime = Time.time;
             PlayerController player = hit.collider.GetComponent<PlayerController>();
             player.beAttack(attack_damage, amor_penetraction);
+            lastDamageTime = Time.time;
         }
     }
-
 }

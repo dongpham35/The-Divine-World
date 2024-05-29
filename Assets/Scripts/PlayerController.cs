@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using JetBrains.Annotations;
+using TMPro;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public HealthBar powerBar;
     public GameObject panel_finish;
     public GameObject cam;
+    public GameObject txtDamageTaken;
 
 
     [SerializeField] float cooldownHit1;
@@ -392,6 +394,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if(view.IsMine)
         {
+            int ran = Random.Range(1, 100);
+            float crit = 0f;
+            if(ran <= critical_rate)
+            {
+                crit = 0.6f; ;
+            }
             RaycastHit2D hit1 = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.8f, LayerMask.GetMask("Player"));
             if (hit1.collider != null && !PhotonNetwork.CurrentRoom.Name.Contains("Map"))
             {
@@ -404,11 +412,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     PlayerController enemy = hit1.collider.GetComponent<PlayerController>();
                     if(numOfElement * enemy.numOfElement < 0)
                     {
-                        enemy.beAttack((int)(attack_damage * 1.4f), amor_penetraction);
+                        enemy.beAttack((int)(attack_damage * (1.4f + crit)), amor_penetraction);
                     }
                     else
                     {
-                        enemy.beAttack(attack_damage, amor_penetraction);
+                        enemy.beAttack((int)(attack_damage * (1 + crit)), amor_penetraction);
                     }
                     if (enemy.currentHealth == 0)
                     {
@@ -430,7 +438,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 {
 
                     AngryPig angrypig = hit2.collider.GetComponent<AngryPig>();
-                    angrypig.beAttacked(attack_damage, amor_penetraction);
+                    angrypig.beAttacked((int)(attack_damage * (1 + crit)), amor_penetraction);
                     if (angrypig.currenthealth == 0)
                     {
                         Account.Instance.experience_points += angrypig.experience_point;
@@ -442,7 +450,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 {
 
                     Chicken chicken = hit2.collider.GetComponent<Chicken>();
-                    chicken.beAttacked(attack_damage, amor_penetraction);
+                    chicken.beAttacked((int)(attack_damage * (1 + crit)), amor_penetraction);
                     if (chicken.currenthealth == 0)
                     {
                         Account.Instance.experience_points += chicken.experience_point;
@@ -486,6 +494,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         changeHealth(-damage);
         healthBar.SetHealth(currentHealth);
         photonView.RPC("changeHealthBar", RpcTarget.Others, currentHealth);
+        GameObject txtdamagetacken = PhotonNetwork.Instantiate(txtDamageTaken.name, transform.position + new Vector3(0, 0.2f, 0), Quaternion.identity);
+        txtdamagetacken.GetComponentInChildren<TMP_Text>().text = ((int)(damage * damagebetaken)).ToString();
     }
 
     public void changeHealth(int bloodChange)

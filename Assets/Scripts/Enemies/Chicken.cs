@@ -1,12 +1,14 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Chicken : MonoBehaviour
 {
-    public Transform character;
+    public List<GameObject> characters;
+    private GameObject character;
     private bool isSeeplayer = false;
 
     [Header("property of the Chicken")]
@@ -17,7 +19,7 @@ public class Chicken : MonoBehaviour
     [SerializeField] private int critical_rate = 0;
     [SerializeField] private int amor_penetraction = 0;
     public int gold = 1;
-    public int experience_point = 3;
+    public int experience_point = 1;
 
     private Animator animChicken;
     private SpriteRenderer spriteChicken;
@@ -40,9 +42,9 @@ public class Chicken : MonoBehaviour
         view = GetComponent<PhotonView>();
         rb = GetComponent<Rigidbody2D>();
 
-        if (character == null)
+        if (characters.Count == 0)
         {
-            character = GameObject.FindGameObjectWithTag("Player").transform;
+            characters = GameObject.FindGameObjectsWithTag("Player").ToList();
         }
         currenthealth = blood;
         canAction = true;
@@ -50,10 +52,37 @@ public class Chicken : MonoBehaviour
         direction = new Vector3(1, 0, 0);
     }
 
+    private void checkDistance()
+    {
+        float distance = 0f;
+        foreach(var ch in characters)
+        {
+            if (view.IsMine)
+            {
+                if (distance == 0)
+                {
+                    distance = Vector2.Distance(transform.position, ch.transform.position);
+                    character = ch;
+                    continue;
+                }
+                if(distance > Vector2.Distance(transform.position, ch.transform.position))
+                {
+                    distance = Vector2.Distance(transform.position, ch.transform.position);
+                    character = ch;
+                }
+            }
+        }
+    }
+
     private void Update()
     {
         if (view.IsMine)
         {
+            if (character == null)
+            {
+                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
+            }
+            checkDistance();
             if (currenthealth == 0)
             {
                 animChicken.SetBool("hit1", true);
@@ -67,7 +96,7 @@ public class Chicken : MonoBehaviour
             }
 
 
-            if (Vector2.Distance(transform.position, character.position) < 2f)
+            if (Vector2.Distance(transform.position, character.transform.position) < 2f)
             {
                 isSeeplayer = true;
             }
@@ -78,7 +107,7 @@ public class Chicken : MonoBehaviour
             else
             {
 
-                direction = (character.position - transform.position).normalized;
+                direction = (character.transform.position- transform.position).normalized;
                 MoveNormalState();
             }
             hitPlayer();
@@ -98,7 +127,7 @@ public class Chicken : MonoBehaviour
         }
 
         rb.velocity = new Vector2(speed * direction.x, rb.velocity.y);
-        if(Vector2.Distance(transform.position, character.position) < 0.7f)
+        if(Vector2.Distance(transform.position, character.transform.position) < 0.7f)
         {
             rb.velocity = Vector2.zero;
         }
@@ -136,10 +165,10 @@ public class Chicken : MonoBehaviour
 
     private void hitPlayer()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.5f, LayerMask.GetMask("Player"));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.3f, LayerMask.GetMask("Player"));
         if(hit.collider != null && Time.time - lastDamageTime > 1.5f)
         {
-            PlayerController player = character.GetComponent<PlayerController>();
+            PlayerController player = hit.collider.GetComponent<PlayerController>();
             player.beAttack(attack_damage, amor_penetraction);
             lastDamageTime = Time.time;
         }

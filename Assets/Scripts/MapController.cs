@@ -87,7 +87,6 @@ public class MapController : MonoBehaviourPunCallbacks
 
                 GameObject angrypig = PhotonNetwork.Instantiate(AngryPigPrefabs.name, new Vector2(randomX, -6.5f), Quaternion.identity);
                 AngryPig scriptAngrypig = angrypig.GetComponent<AngryPig>();
-                scriptAngrypig.character = characterSpawned.transform;
                 SpawnAngryPigs.Add(angrypig);
 
             }
@@ -101,7 +100,6 @@ public class MapController : MonoBehaviourPunCallbacks
 
                 GameObject angrypig = PhotonNetwork.Instantiate(AngryPigPrefabs.name, new Vector2(randomX, -6.5f), Quaternion.identity);
                 AngryPig scriptAngrypig = angrypig.GetComponent<AngryPig>();
-                scriptAngrypig.character = characterSpawned.transform;
                 SpawnAngryPigs[i] = angrypig;
 
             }
@@ -119,7 +117,6 @@ public class MapController : MonoBehaviourPunCallbacks
 
                 GameObject chicken = PhotonNetwork.Instantiate(ChickenPrefabs.name, new Vector2(randomX, -7.5f), Quaternion.identity);
                 Chicken scriptChicken = chicken.GetComponent<Chicken>();
-                scriptChicken.character = characterSpawned.transform;
                 SpawnChickens.Add(chicken);
             }
         }
@@ -132,7 +129,6 @@ public class MapController : MonoBehaviourPunCallbacks
 
                 GameObject chicken = PhotonNetwork.Instantiate(ChickenPrefabs.name, new Vector2(randomX, -7.5f), Quaternion.identity);
                 Chicken scriptChicken = chicken.GetComponent<Chicken>();
-                scriptChicken.character = characterSpawned.transform;
                 SpawnChickens[i] = chicken;
             }
         }
