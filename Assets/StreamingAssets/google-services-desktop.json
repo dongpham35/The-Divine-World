@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "772558794127",
+    "firebase_url": "https://divworld-c83ea-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "divworld-c83ea",
+    "storage_bucket": "divworld-c83ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772558794127:android:85d5b1f4064f37dcbeeffa",
+        "android_client_info": {
+          "package_name": "com.DongPham.DivWorld"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQKYW7MmOJIv1Bnx3niLz1HEjV8btVFU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
