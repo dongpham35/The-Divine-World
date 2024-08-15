@@ -289,7 +289,7 @@ public class API_Restful : MonoBehaviour
                     {
                         Up_level up_level = new Up_level();
                         up_level.levelID = int.Parse(stats[i]["levelID"]);
-                        up_level.@class = stats[i]["class"].ToString().Replace('"', ' ').Replace(" ", "");
+                        up_level.classname = stats[i]["class"].ToString().Replace('"', ' ').Replace(" ", "");
                         up_level.blood = int.Parse(stats[i]["blood"]);
                         up_level.attack_damage = int.Parse(stats[i]["attack_damage"]);
                         up_level.amor = int.Parse(stats[i]["amor"]);

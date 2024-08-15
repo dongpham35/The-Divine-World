@@ -31,10 +31,10 @@ public class PvPController : MonoBehaviourPunCallbacks
         panel_Exit.SetActive(false);
         soundTrack = GetComponent<AudioSource>();
         soundTrack.Play();
-        if(Account.Instance.@class.Equals("air")) indexCharacter = 0;
-        else if (Account.Instance.@class.Equals("water")) indexCharacter = 1;
-        else if (Account.Instance.@class.Equals("earth")) indexCharacter = 2;
-        else if (Account.Instance.@class.Equals("fire")) indexCharacter = 3;
+        if(Account.Instance.classname.Equals("air")) indexCharacter = 0;
+        else if (Account.Instance.classname.Equals("water")) indexCharacter = 1;
+        else if (Account.Instance.classname.Equals("earth")) indexCharacter = 2;
+        else if (Account.Instance.classname.Equals("fire")) indexCharacter = 3;
         if (PhotonNetwork.CurrentRoom.Name.Contains(Account.Instance.username))
         {
             player =  PhotonNetwork.Instantiate(characterPrefabs[indexCharacter].name, point1, Quaternion.identity);

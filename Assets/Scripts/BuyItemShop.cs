@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Models;
+using Firebase.Database;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,16 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using WebSocketSharp;
 
 public class BuyItemShop : MonoBehaviour
 {
+    DatabaseReference databaseReference;
+
+    private void Start()
+    {
+        databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+    }
     public void buyItemInShop()
     {
         var name_item_current_selected = GetComponentInChildren<TMP_Text>().text;
@@ -19,7 +27,7 @@ public class BuyItemShop : MonoBehaviour
             if(itemInInventoryItem != null)
             {
                 itemInInventoryItem.quality++;
-                StartCoroutine(postIventoryItemTable(itemInInventoryItem.inventoryID, itemInInventoryItem.itemID, itemInInventoryItem.quality));
+                StartCoroutine(setInventoryItemTable(itemInInventoryItem.inventoryID, itemInInventoryItem.itemID, itemInInventoryItem.quality));
             }
             else
             {
@@ -30,7 +38,7 @@ public class BuyItemShop : MonoBehaviour
 
                 Inventory_Item.Instance.items.Add(itemInInventoryItem);
 
-                StartCoroutine(putInventoryItemTable(itemInInventoryItem.inventoryID, itemInInventoryItem.itemID, itemInInventoryItem.quality));
+                StartCoroutine(setInventoryItemTable(itemInInventoryItem.inventoryID, itemInInventoryItem.itemID, itemInInventoryItem.quality));
             }
             Account.Instance.gold -= item_current_selected.cost;
             StartCoroutine(postAccountTable_gold(Account.Instance.username, Account.Instance.gold));
@@ -47,62 +55,30 @@ public class BuyItemShop : MonoBehaviour
 
     IEnumerator postAccountTable_gold(string username, int gold)
     {
-        string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&gold={gold}";
-        using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
+        var data = new Dictionary<string, object>
         {
+            {"level",   Account.Instance.level},
+            {"avatar",   Account.Instance.avatar},
+            {"password", Account.Instance.password },
+            {"email", Account.Instance.email },
+            {"gold", gold},
+            {"levelID",  Account.Instance.levelID},
+            {"class", Account.Instance.classname },
+            {"exp",  Account.Instance.experience_points}
+        };
 
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                #if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-                #endif
-            }
-            else
-            {
-                Debug.Log("Cap nhat thanh cong bang Account");
-            }
-            request.Dispose();
-        }
-    }
-    IEnumerator putInventoryItemTable(int inventoryID, int itemID, int quality)
-    {
-        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
-        using (UnityWebRequest request = UnityWebRequest.Put(url, "PUT"))
-        {
+        var task = databaseReference.Child("Account").Child(username).SetValueAsync(data);
 
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-                
-            }
-            else
-            {
-                Debug.Log("Them thanh con bang inventory_item");
-            }
-            request.Dispose();
-        }
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
     }
-    IEnumerator postIventoryItemTable(int inventoryID, int itemID, int quality)
+    IEnumerator setInventoryItemTable(int inventoryID, int itemID, int quality)
     {
-        string url = $"http://localhost/TheDiVWorld/api/Inventory_Item?inventoryID={inventoryID}&itemID={itemID}&quality={quality}";
-        using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
+        var data = new Dictionary<string, object>
         {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-                Debug.Log("Cap nhat thanh cong bang inventory_item");
-            }
-            request.Dispose();
-        }
+            {"quality", quality }
+        };
+
+        var task = databaseReference.Child("Inventory_Item").Child(inventoryID.ToString()).Child(itemID.ToString()).SetValueAsync(data);
+        yield return new WaitUntil(predicate : () => task.IsCompleted);
     }
 }

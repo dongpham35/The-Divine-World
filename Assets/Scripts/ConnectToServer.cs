@@ -16,7 +16,7 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        if (string.IsNullOrEmpty(Account.Instance.@class))
+        if (string.IsNullOrEmpty(Account.Instance.classname))
         {
             SceneManager.LoadScene("NewSignIn");
         }

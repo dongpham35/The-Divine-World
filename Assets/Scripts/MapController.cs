@@ -10,9 +10,11 @@ using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Photon.Realtime;
+using Firebase.Database;
 
 public class MapController : MonoBehaviourPunCallbacks
 {
+    DatabaseReference databaseReference;
 
     [SerializeField] GameObject[] characterPrefabs;
     [SerializeField] GameObject AngryPigPrefabs;
@@ -39,22 +41,23 @@ public class MapController : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         soundTrack = GetComponent<AudioSource>();
         soundTrack.Play();
 
-        if (Account.Instance.@class.Equals("air"))
+        if (Account.Instance.classname.Equals("air"))
         {
             namecharacter = "Aang";
             characterIndex = 0;
-        } else if (Account.Instance.@class.Equals("water"))
+        } else if (Account.Instance.classname.Equals("water"))
         {
             namecharacter = "Katara";
             characterIndex = 1;
-        } else if (Account.Instance.@class.Equals("earth"))
+        } else if (Account.Instance.classname.Equals("earth"))
         {
             namecharacter = "Toph";
             characterIndex = 2;
-        } else if (Account.Instance.@class.Equals("fire"))
+        } else if (Account.Instance.classname.Equals("fire"))
         {
             namecharacter = "Zuko";
             characterIndex = 3;
@@ -165,8 +168,7 @@ public class MapController : MonoBehaviourPunCallbacks
 
     public void ReturnMenuGame()
     {
-        StartCoroutine(postAccountTable_gold(Account.Instance.username, Account.Instance.gold));
-        StartCoroutine(postAccountTable_exp(Account.Instance.username, Account.Instance.experience_points));
+        StartCoroutine(updateAccountTable(Account.Instance.username, Account.Instance.gold, Account.Instance.experience_points));
         if (PhotonNetwork.InRoom)
         {
             Camera.main.transform.SetParent(null);
@@ -195,45 +197,23 @@ public class MapController : MonoBehaviourPunCallbacks
     {
         SceneManager.LoadScene("MenuGame");
     }
-    IEnumerator postAccountTable_gold(string username, int gold)
+    IEnumerator updateAccountTable(string username, int gold, int exp)
     {
-        string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&gold={gold}";
-        using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
+        var data = new Dictionary<string, object>
         {
+            {"avartar", Account.Instance.avatar },
+            {"email", Account.Instance.email },
+            {"password", Account.Instance.password },
+            {"gold", gold },
+            {"levelID", Account.Instance.levelID },
+            {"classname", Account.Instance.classname },
+            {"level", Account.Instance.level },
+            {"exp", exp }
+        };
 
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-                Debug.Log("Cap nhat thanh cong bang Account");
-            }
-            request.Dispose();
-        }
+        var task = databaseReference.Child("Account").Child(username).SetValueAsync(data);
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
     }
 
-    IEnumerator postAccountTable_exp(string username, int exp)
-    {
-        string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&exp={exp}";
-        using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
-        {
-
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif     
-            }
-            else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Account");
-                }
-                request.Dispose();
-            }
-        }
 }

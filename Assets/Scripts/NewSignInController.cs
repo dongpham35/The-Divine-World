@@ -1,8 +1,10 @@
 ﻿using Assets.Scripts.Models;
+using Firebase.Database;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -11,7 +13,8 @@ using UnityEngine.UI;
 
 public class NewSignInController : MonoBehaviour
 {
-    private string url = "http://localhost/TheDiVWorld/api/";
+
+    DatabaseReference databaseReference;
 
     private string[] nameCharacter = { "Aang", "Katara", "Toph", "Zuko" };
     private string[] introCharacter = 
@@ -20,19 +23,31 @@ public class NewSignInController : MonoBehaviour
         "nữ thổ thuật sư mù nhưng có khả năng thổ thuật phi thường.",
         "hoàng tử của Hỏa Quốc nhưng anh bị cha mình Hỏa Vương Ozai, trục xuất."
         };
+
+    private string[] inforCharacter =
+    {
+        "Blood: 48" + "\n" + "Attack: 7" + "\n" + "Amor: 20" + "\n" + "Speed: 18",
+        "Blood: 53" + "\n" + "Attack: 8" + "\n" + "Amor: 21" + "\n" + "Speed: 13",
+        "Blood: 50" + "\n" + "Attack: 9" + "\n" + "Amor: 25" + "\n" + "Speed: 10",
+        "Blood: 45" + "\n" + "Attack: 12" + "\n" + "Amor: 16" + "\n" + "Speed: 15"
+    };
+
     private int currentIndex;
 
     [SerializeField] private Sprite[] character;
     [SerializeField] private TMP_Text txtInproCharacter;
     [SerializeField] private Image imgCharacter;
     [SerializeField] private TMP_Text txtNameCharacter;
+    [SerializeField] private TMP_Text txtInforCharacter;
 
     private void Start()
     {
+        databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         currentIndex = 0;
         imgCharacter.sprite = character[currentIndex];
         txtInproCharacter.text = introCharacter[currentIndex];
         txtNameCharacter.text = nameCharacter[currentIndex];
+        txtInforCharacter.text = inforCharacter[currentIndex];
     }
 
     public void NextCharacter()
@@ -42,6 +57,7 @@ public class NewSignInController : MonoBehaviour
         imgCharacter.sprite = character[currentIndex];
         txtInproCharacter.text = introCharacter[currentIndex];
         txtNameCharacter.text = nameCharacter[currentIndex];
+        txtInforCharacter.text = inforCharacter[currentIndex];
     }
     public void PreviousCharacter() 
     {
@@ -50,6 +66,7 @@ public class NewSignInController : MonoBehaviour
         imgCharacter.sprite = character[currentIndex];
         txtInproCharacter.text = introCharacter[currentIndex];
         txtNameCharacter.text = nameCharacter[currentIndex];
+        txtInforCharacter.text = inforCharacter[currentIndex];
     }
 
     public void SelectCharacter()
@@ -59,14 +76,14 @@ public class NewSignInController : MonoBehaviour
             Account.Instance.avatar = "Aang";
             Account.Instance.gold = 0;
             Account.Instance.levelID = 0;
-            Account.Instance.@class = "air";
+            Account.Instance.classname = "air";
             Account.Instance.experience_points = 0;
         }else if(currentIndex == 1)
         {
             Account.Instance.avatar = "Katara";
             Account.Instance.gold = 0;
             Account.Instance.levelID = 0;
-            Account.Instance.@class = "water";
+            Account.Instance.classname = "water";
             Account.Instance.experience_points = 0;
         }
         else if(currentIndex == 2)
@@ -74,7 +91,7 @@ public class NewSignInController : MonoBehaviour
             Account.Instance.avatar = "Toph";
             Account.Instance.gold = 0;
             Account.Instance.levelID = 0;
-            Account.Instance.@class = "earth";
+            Account.Instance.classname = "earth";
             Account.Instance.experience_points = 0;
         }
         else if( currentIndex == 3)
@@ -82,275 +99,216 @@ public class NewSignInController : MonoBehaviour
             Account.Instance.avatar = "Zuko";
             Account.Instance.gold = 0;
             Account.Instance.levelID = 0;
-            Account.Instance.@class = "fire";
+            Account.Instance.classname = "fire";
             Account.Instance.experience_points = 0;
             Account.Instance.level = 0;
         }
-        StartCoroutine(postAccountTable(Account.Instance.username, Account.Instance.gold, Account.Instance.levelID, Account.Instance.@class, Account.Instance.experience_points));
+        StartCoroutine(UpdateAccount(Account.Instance.username, Account.Instance.gold, Account.Instance.levelID, Account.Instance.classname, Account.Instance.experience_points, Account.Instance.level, Account.Instance.avatar));
     }
 
-    IEnumerator postAccountTable(string username, int gold, int levelID, string @class, int exp)
+    IEnumerator UpdateAccount(string username, int gold, int levelID, string classname, int exp, int level, string avatar)
     {
-        string URL = url + $"Account?username={username}&gold={gold}&levelID={levelID}&class={@class}&exp={exp}";
-        using (UnityWebRequest request = UnityWebRequest.Post(URL,"Post"))
+        var data = new Dictionary<string, object>
         {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log("Loi Accoutn");
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
+            {"level",  level},
+            {"avatar",  avatar},
+            {"password", Account.Instance.password },
+            {"email", Account.Instance.email },
+            {"gold", gold},
+            {"levelID", levelID},
+            {"class", classname },
+            {"exp", exp}
+        };
 
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Tên tài khoản không tồn tại", "Ok");
-#endif
-                }
-                else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Account");
-                    Up_level ul = Up_level.Instance.up_levels.FirstOrDefault(u => u.@class.Equals(Account.Instance.@class) && u.levelID == Account.Instance.levelID);
-                    StartCoroutine(putPropertyTable(Account.Instance.username, ul.blood, ul.attack_damage, ul.amor, 0, ul.speed, 0));
-                    StartCoroutine(putItem_AttachedTable(Account.Instance.username));
-                    SceneManager.LoadScene("MenuGame");
-                }
+        var task = databaseReference.Child("Account").Child(username).SetValueAsync(data);
 
-            }
-            request.Dispose();
+        yield return new WaitUntil(predicate:() => task.IsCompleted);
+
+        StartCoroutine(GetUp_level());
+
+    }
+
+    public IEnumerator GetUp_level()
+    {
+        var task = databaseReference.Child("Up_level").GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
+
+
+        DataSnapshot datasnapshot = task.Result;
+        if (!datasnapshot.Exists)
+        {
+            Debug.Log("Up_level has no data");
+            yield return 0;
         }
-    }
-
-    IEnumerator putPropertyTable(string username, int blood, int attack_damage, int amor, int critical_rate, int speed, int amor_penetraction)
-    {
-        string URL = url + $"Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}&critical_rate={critical_rate}&speed={speed}&amor_penetraction={amor_penetraction}";
-        using (UnityWebRequest request = UnityWebRequest.Put(URL, "Put"))
+        foreach (var level in datasnapshot.Children)
         {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
+            if (level.Key.Equals("defaultLevel"))
             {
-                Debug.Log("Loi property");
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
+                foreach (var classname in level.Children)
                 {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Tên tài khoản không tồn tại", "Ok");
-#endif
-                }
-                else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Property");
-                    StartCoroutine(putInventoryTable(Account.Instance.username));
-                    StartCoroutine(getProperty(Account.Instance.username));
-                }
+                    Up_level ul = new Up_level();
 
-            }
-            request.Dispose();
-        }
-    }
+                    ul.levelID = 0;
 
-    IEnumerator putInventoryTable(string username)
-    {
-        string URL = url + $"Inventory?username={username}";
-        using (UnityWebRequest request = UnityWebRequest.Put(URL, "Put"))
-        {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log("Loi Inventory");
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
+                    ul.classname = classname.Key;
 
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Tên tài khoản không tồn tại", "Ok");
-#endif
-                }
-                else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Inventory");
-                    StartCoroutine(getInventory(Account.Instance.username));
-                }
-
-            }
-            request.Dispose();
-        }
-    }
-    IEnumerator getInventory(string username)
-    {
-        string URL = url + "Inventory?username=" + username;
-        using (UnityWebRequest request = UnityWebRequest.Get(URL))
-        {
-
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats != null)
-                {
-                    Inventory.Instance.inventoryID = int.Parse(stats["inventoryID"]);
-                    Inventory.Instance.username = stats["username"].ToString().Replace('"', ' ').Replace(" ", "");
-                }
-
-            }
-
-            request.Dispose();
-        }
-
-    }
-    IEnumerator getProperty(string username)
-    {
-        string URL =url + "Property?username=" + username;
-        using (UnityWebRequest request = UnityWebRequest.Get(URL))
-        {
-
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats != null)
-                {
-                    Property.Instance.propertyID = int.Parse(stats["propertyID"]);
-                    Property.Instance.username = username;
-                    Property.Instance.blood = int.Parse(stats["blood"]);
-                    Property.Instance.attack_damage = int.Parse(stats["attack_damage"]);
-                    Property.Instance.amor = int.Parse(stats["amor"]);
-                    Property.Instance.critical_rate = int.Parse(stats["critical_rate"]);
-                    Property.Instance.speed = int.Parse(stats["speed"]);
-                    Property.Instance.amor_penetraction = int.Parse(stats["amor_penetraction"]);
-                }
-
-            }
-            request.Dispose();
-        }
-    }
-
-    IEnumerator getItem_Attached()
-    {
-        string URL = url + "Item_Attached?username=" + Account.Instance.username;
-        using (UnityWebRequest request = UnityWebRequest.Get(URL))
-        {
-
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-                }
-                else
-                {
-                    Item_Attached.Instance.item_attachedID = int.Parse(stats["item_attachedID"]);
-                    if (stats["itemID1"] != null)
+                    foreach (var property in classname.Children)
                     {
-                        Item_Attached.Instance.item_attacheds[0] = int.Parse(stats["itemID1"]);
+                        if (property.Key.Equals("amor"))
+                        {
+                            ul.amor = int.Parse(property.Value.ToString());
+                            continue;
+                        }
+                        if (property.Key.Equals("attack_damage"))
+                        {
+                            ul.attack_damage = int.Parse(property.Value.ToString());
+                            continue;
+                        }
+                        if (property.Key.Equals("blood"))
+                        {
+                            ul.blood = int.Parse(property.Value.ToString());
+                            continue;
+                        }
+                        if (property.Key.Equals("speed"))
+                        {
+                            ul.speed = int.Parse(property.Value.ToString());
+                            continue;
+                        }
                     }
-                    if (stats["itemID2"] != null)
+
+                    Up_level.Instance.up_levels.Add(ul);
+                }
+                continue;
+            }
+            foreach (var classname in level.Children)
+            {
+                Up_level ul = new Up_level();
+
+                ul.levelID = int.Parse(level.Key);
+
+                ul.classname = classname.Key;
+
+                foreach (var property in classname.Children)
+                {
+                    if (property.Key.Equals("amor"))
                     {
-                        Item_Attached.Instance.item_attacheds[1] = int.Parse(stats["itemID2"]);
+                        ul.amor = int.Parse(property.Value.ToString());
+                        continue;
                     }
-                    if (stats["itemID3"] != null)
+                    if (property.Key.Equals("attack_damage"))
                     {
-                        Item_Attached.Instance.item_attacheds[2] = int.Parse(stats["itemID3"]);
+                        ul.attack_damage = int.Parse(property.Value.ToString());
+                        continue;
                     }
-                    if (stats["itemID4"] != null)
+                    if (property.Key.Equals("blood"))
                     {
-                        Item_Attached.Instance.item_attacheds[3] = int.Parse(stats["itemID4"]);
+                        ul.blood = int.Parse(property.Value.ToString());
+                        continue;
                     }
-                    if (stats["itemID5"] != null)
+                    if (property.Key.Equals("speed"))
                     {
-                        Item_Attached.Instance.item_attacheds[4] = int.Parse(stats["itemID5"]);
+                        ul.speed = int.Parse(property.Value.ToString());
+                        continue;
                     }
-                    if (stats["itemID6"] != null)
-                    {
-                        Item_Attached.Instance.item_attacheds[5] = int.Parse(stats["itemID6"]);
-                    }
-                    Item_Attached.Instance.num_item_attached = Item_Attached.Instance.item_attacheds.Where(i => i != 0f).ToList().Count;
-                    Item_Attached.Instance.username = Account.Instance.username;
                 }
 
+                Up_level.Instance.up_levels.Add(ul);
             }
-            request.Dispose();
         }
+        Up_level levelDefault = Up_level.Instance.up_levels.Find(u => u.levelID == 0 && u.classname.Equals(Account.Instance.classname));
+        StartCoroutine(SetProperty(Account.Instance.username, levelDefault.blood, levelDefault.attack_damage, levelDefault.amor, levelDefault.speed, 0, 0));
     }
 
-    IEnumerator putItem_AttachedTable(string username)
+    IEnumerator SetProperty(string username, int blood, int attack, int amor, int speed, int critical_rate, int amor_penetraction)
     {
-        string URL = url + $"Item_Attached?username={username}";
-        using (UnityWebRequest request = UnityWebRequest.Put(URL, "Put"))
+        Property.Instance.username = username;
+        Property.Instance.blood = blood;
+        Property.Instance.attack_damage = attack;
+        Property.Instance.amor = amor;
+        Property.Instance.speed = speed;
+        Property.Instance.critical_rate = critical_rate;
+        Property.Instance.amor_penetraction = amor_penetraction;
+        var data = new Dictionary<string, object>
         {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log("Loi Inventory");
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
+            {"blood", blood },
+            {"attack_damage", attack },
+            {"amor",amor },
+            {"speed", speed },
+            {"amor_penentraction", amor_penetraction },
+            {"critical_rate", critical_rate }
+        };
 
-                string json = request.downloadHandler.text;
-                SimpleJSON.JSONNode stats = SimpleJSON.JSON.Parse(json);
-                if (stats == null)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Tên tài khoản không tồn tại", "Ok");
-#endif
-                }
-                else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Item_attached");
-                    StartCoroutine(getItem_Attached());
-                }
+        var task = databaseReference.Child("Property").Child(username).SetValueAsync(data);
 
-            }
-            request.Dispose();
-        }
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
+
+        var getInventoryCount = databaseReference.Child("Inventory").GetValueAsync();
+
+        yield return new WaitUntil(predicate: ()=> getInventoryCount.IsCompleted);
+
+        Inventory.Instance.username = username;
+        Inventory.Instance.inventoryID = (int)getInventoryCount.Result.ChildrenCount + 1;
+        StartCoroutine(SetInventory(Inventory.Instance.username, Inventory.Instance.inventoryID));
+    }
+
+    IEnumerator SetInventory(string username, int inventoryID)
+    {
+        var data = new Dictionary<string, object>
+        {
+            { "inventoryID", inventoryID}
+        };
+
+        var task = databaseReference.Child("Inventory").Child(username).SetValueAsync(data);
+
+        yield return new WaitUntil(predicate:()=> task.IsCompleted);
+        StartCoroutine(setInventory_Item(username, inventoryID, 0));
+    }
+
+    IEnumerator setInventory_Item(string username, int inventoryID, int quality)
+    {
+        var data = new Dictionary<string, object>
+        {
+            {"quality", quality }
+        };
+
+        var task = databaseReference.Child("Inventory_Item").Child(inventoryID.ToString()).Child("default").SetValueAsync(data);
+
+        yield return new WaitUntil(predicate:()=> task.IsCompleted);
+
+        StartCoroutine(setItem_Attached(username, Item_Attached.Instance.item_attacheds[0], Item_Attached.Instance.item_attacheds[1], Item_Attached.Instance.item_attacheds[2], Item_Attached.Instance.item_attacheds[3],
+            Item_Attached.Instance.item_attacheds[4], Item_Attached.Instance.item_attacheds[5]));
+    }
+
+    IEnumerator setItem_Attached(string username, int itemID1, int itemID2, int itemID3, int itemID4, int itemID5, int itemID6)
+    {
+        var data = new Dictionary<string, object>
+        {
+            {"itemID1", itemID1 },
+            {"itemID2", itemID2 },
+            {"itemID3", itemID3 },
+            {"itemID4", itemID4 },
+            {"itemID5", itemID5 },
+            {"itemID6", itemID6 }
+        };
+
+        var task = databaseReference.Child("Item_Attached").Child(username).SetValueAsync(data);
+
+        yield return new WaitUntil(predicate:() => task.IsCompleted);
+        StartCoroutine(setSession(username));
+    }
+
+    IEnumerator setSession(string username)
+    {
+        var data = new Dictionary<string, object>
+        {
+            {"winnerID", "none" }
+        };
+
+        var task = databaseReference.Child("Session").Child(username).Child("default").SetValueAsync(data);
+
+        yield return new WaitUntil(predicate:(() => task.IsCompleted));
+
+        SceneManager.LoadScene("MenuGame");
     }
 }

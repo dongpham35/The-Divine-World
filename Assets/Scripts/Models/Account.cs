@@ -16,14 +16,13 @@ namespace Assets.Scripts.Models
             } 
         }
 
-
         public string username { get; set; }
         public string avatar { get;set; }
         public string email { get; set; }
         public string password { get; set; }
         public int gold { get; set; }
         public int levelID { get; set; }
-        public string @class { get; set; }
+        public string classname { get; set; }
         public int level { get; set; }
         public int experience_points { get; set; }
 

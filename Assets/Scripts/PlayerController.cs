@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using JetBrains.Annotations;
 using TMPro;
+using Firebase.Database;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private SpriteRenderer spriRender_Player;
     private Animator animator_Player;
     private BoxCollider2D collider_Player;
+    private DatabaseReference databaseReference;
 
     private int myId;
     public int idLoser;
@@ -76,7 +78,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private bool canHit1;
     private bool canHit2;
     private bool canHit3;
-    private int powerToUseHit2 = 15;
 
     private GameObject maincamera;
 
@@ -99,16 +100,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
         view = GetComponent<PhotonView>();
         if (view.IsMine)
         {
-            if (Account.Instance.@class.Equals("air"))
+            if (Account.Instance.classname.Equals("air"))
             {
                 numOfElement = 1;
-            }else if (Account.Instance.@class.Equals("water"))
+            }else if (Account.Instance.classname.Equals("water"))
             {
                 numOfElement = 1;
-            }else if (Account.Instance.@class.Equals("earth"))
+            }else if (Account.Instance.classname.Equals("earth"))
             {
                 numOfElement = -1;
-            }else if (Account.Instance.@class.Equals("fire"))
+            }else if (Account.Instance.classname.Equals("fire"))
             {
                 numOfElement = -1;
             }
@@ -121,6 +122,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         panel_finish.SetActive(false);
         if (view.IsMine)
         {
+            databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
             maincamera = Instantiate(cam, new Vector3(0, 0, -10), Quaternion.identity);
             maincamera.transform.SetParent(transform);
             maincamera.transform.localPosition = new Vector3(0, 0, -10);
@@ -216,17 +218,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
             dirX = canAction ? Input.GetAxisRaw("Horizontal") : 0;
             if (isGround())
             {
-                rb.velocity = new Vector2((float)dirX * speed * 2 / 3, rb.velocity.y);
+                rb.velocity = new Vector2((float)dirX * speed * 2 / 3 * 0.2f, rb.velocity.y);
             }
             else
             {
-                rb.velocity = new Vector2((float)dirX * speed, rb.velocity.y);
+                rb.velocity = new Vector2((float)dirX * speed * 0.2f, rb.velocity.y);
             }
 
-            if (Input.GetButtonDown("Vertical") && isGround() && canAction)
+            if (Input.GetButtonDown("Vertical") && isGround() && canAction )
             {
                 jump.Play();
-                rb.velocity = new Vector2(rb.velocity.x, speed * 1.5f);
+                rb.velocity = new Vector2(rb.velocity.x, speed * 0.2f);
             }
 
             if (animator_Player.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && Time.time - lastAttack > 0.3)
@@ -476,8 +478,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             Account.Instance.gold += 3;
             Account.Instance.experience_points += 5;
-            StartCoroutine(postAccountTable_exp(Account.Instance.username, Account.Instance.experience_points));
-            StartCoroutine(postAccountTable_gold(Account.Instance.username, Account.Instance.gold));
+            StartCoroutine(updateAccountTable(Account.Instance.username, Account.Instance.gold, Account.Instance.experience_points));
             panel_finish.SetActive(true);
         }
     }
@@ -613,49 +614,24 @@ public class PlayerController : MonoBehaviourPunCallbacks
             SceneManager.LoadScene("MenuGame");
         }
     }
-    IEnumerator postAccountTable_gold(string username, int gold)
+
+    IEnumerator updateAccountTable(string username, int gold, int exp)
     {
+        var data = new Dictionary<string, object>
+        {
+            {"avartar", Account.Instance.avatar },
+            {"email", Account.Instance.email },
+            {"password", Account.Instance.password },
+            {"gold", gold },
+            {"levelID", Account.Instance.levelID },
+            {"classname", Account.Instance.classname },
+            {"level", Account.Instance.level },
+            {"exp", exp }
+        };
 
-            string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&gold={gold}";
-            using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
-            {
+        var task = databaseReference.Child("Account").Child(username).SetValueAsync(data);
 
-                yield return request.SendWebRequest();
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-                }
-                else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Account");
-                }
-                request.Dispose();
-            }
-
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
     }
-
-    IEnumerator postAccountTable_exp(string username, int exp)
-    {
-
-            string url = $"http://localhost/TheDiVWorld/api/Account?username={username}&exp={exp}";
-            using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
-            {
-
-                yield return request.SendWebRequest();
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-                }
-                else
-                {
-                    Debug.Log("Cap nhat thanh cong bang Account");
-                }
-                request.Dispose();
-            }
-        }
 
 }

@@ -10,10 +10,12 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEditor;
 using UnityEngine.SceneManagement;
+using Firebase.Database;
 
 public class MenuGameController : MonoBehaviourPunCallbacks
 {
 
+    DatabaseReference databaseReference;
     private static MenuGameController instance;
 
     public static MenuGameController Instance { get { return instance; } }
@@ -77,22 +79,23 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     private void Awake()
     {
         view = GetComponent<PhotonView>();
-        if (Account.Instance.@class.Equals("air"))
+        databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+        if (Account.Instance.classname.Equals("air"))
         {
             avatar.sprite = avatars[0];
             img_character.sprite = imgCharacter[0];
         }
-        else if (Account.Instance.@class.Equals("water"))
+        else if (Account.Instance.classname.Equals("water"))
         {
             avatar.sprite = avatars[1];
             img_character.sprite = imgCharacter[1];
         }
-        else if (Account.Instance.@class.Equals("earth"))
+        else if (Account.Instance.classname.Equals("earth"))
         {
             avatar.sprite = avatars[2];
             img_character.sprite = imgCharacter[2];
         }
-        else if (Account.Instance.@class.Equals("fire"))
+        else if (Account.Instance.classname.Equals("fire"))
         {
             avatar.sprite = avatars[3];
             img_character.sprite = imgCharacter[3];
@@ -110,12 +113,12 @@ public class MenuGameController : MonoBehaviourPunCallbacks
         StartCoroutine(reLoadMenuGame());
         PhotonNetwork.JoinOrCreateRoom("ChatRoom", new RoomOptions { MaxPlayers = 10 }, TypedLobby.Default);
         PhotonNetwork.NickName = Account.Instance.username;
-            if(Mathf.Pow(2, Account.Instance.level+1) < Account.Instance.experience_points)
+            if(Mathf.Pow(2, Account.Instance.level+1) <= Account.Instance.experience_points)
             {
                 int level = Account.Instance.level + 1;
-                while(Mathf.Pow(2, level) < Account.Instance.experience_points)
+                while(Mathf.Pow(2, level) <= Account.Instance.experience_points)
                 {
-                    Up_level up = Up_level.Instance.up_levels.FirstOrDefault(ul => ul.@class.Equals(Account.Instance.@class) && ul.levelID == level);
+                    Up_level up = Up_level.Instance.up_levels.FirstOrDefault(ul => ul.classname.Equals(Account.Instance.classname) && ul.levelID == level);
                     Property.Instance.blood += up.blood;
                     Property.Instance.speed += up.speed;
                     Property.Instance.amor += up.amor;
@@ -123,9 +126,10 @@ public class MenuGameController : MonoBehaviourPunCallbacks
                     level++;
                 }
                 Account.Instance.level = level-1;
+            StartCoroutine(updateAccountTable(Account.Instance.username, Account.Instance.level));
             StartCoroutine(postPropertyTable(Account.Instance.username, Property.Instance.blood, Property.Instance.attack_damage, Property.Instance.amor,
                         Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
-        }
+            }
     }
 
     private void Start()
@@ -147,7 +151,7 @@ public class MenuGameController : MonoBehaviourPunCallbacks
         {
             username.text = Account.Instance.username;
             gold.text = Account.Instance.gold.ToString();
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 
@@ -180,7 +184,6 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     {
         for (int i = 0; i < Inventory_Item.Instance.items.Count; i++)
         {
-            if (Inventory_Item.Instance.items[i].quality == 0) continue;
             int itemid = Inventory_Item.Instance.items[i].itemID;
             int quality = Inventory_Item.Instance.items[i].quality;
             string itemname = Item.Instance.items.FirstOrDefault(item => item.itemID == itemid).name;
@@ -377,7 +380,7 @@ public class MenuGameController : MonoBehaviourPunCallbacks
             Account.Instance.password = "";
             Account.Instance.gold = 0;
             Account.Instance.levelID = 0;
-            Account.Instance.@class = "";
+            Account.Instance.classname = "";
             Account.Instance.experience_points = 0;
             Account.Instance.level = 0;
             Friend.Instance.friends.Clear();
@@ -447,22 +450,37 @@ public class MenuGameController : MonoBehaviourPunCallbacks
     }
     IEnumerator postPropertyTable(string username, int blood, int attack_damage, int amor, int critical_rate, int speed, int amor_penetraction)
     {
-        string url = $"http://localhost/TheDiVWorld/api/Property?username={username}&blood={blood}&attack_damage={attack_damage}&amor={amor}&critical_rate={critical_rate}&speed={speed}&amor_penetraction={amor_penetraction}";
-        using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
+        var data = new Dictionary<string, object>
         {
+            {"blood", blood },
+            {"attack_damage", attack_damage },
+            {"amor", amor },
+            {"critical_rate", critical_rate },
+            {"amor_penetraction", amor_penetraction },
+            {"speed", speed }
+        };
 
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", request.error, "Ok");
-#endif
-            }
-            else
-            {
-                Debug.Log("Cap nhat thanh cong bang Property");
-            }
-            request.Dispose();
-        }
+        var task = databaseReference.Child("Property").Child(username).SetValueAsync(data);
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
+    }
+
+    IEnumerator updateAccountTable(string username, int level)
+    {
+        var data = new Dictionary<string, object>
+        {
+            {"avartar", Account.Instance.avatar },
+            {"email", Account.Instance.email },
+            {"password", Account.Instance.password },
+            {"gold", Account.Instance.gold },
+            {"levelID", Account.Instance.levelID },
+            {"classname", Account.Instance.classname },
+            {"level", level },
+            {"exp", Account.Instance.experience_points }
+        };
+
+        var task = databaseReference.Child("Account").Child(username).SetValueAsync(data);
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
     }
 }

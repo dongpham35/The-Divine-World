@@ -7,6 +7,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEditor;
+using Firebase.Database;
+using Unity.VisualScripting;
 
 public class SignUp : MonoBehaviour
 {
@@ -22,10 +24,13 @@ public class SignUp : MonoBehaviour
     private string repassword;
     private string data;
 
+    DatabaseReference databaseReference;
+
     private AudioSource soundTrack;
 
     private void Start()
     {
+        databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         soundTrack = GetComponent<AudioSource>();
         soundTrack.Play();
         if (PlayerPrefs.HasKey("volume"))
@@ -64,9 +69,45 @@ public class SignUp : MonoBehaviour
 #endif
             return;
         }
+        StartCoroutine(CheckUsername(username, password, email));
 
-        URL = "http://localhost/TheDiVWorld/api/Account";
-        StartCoroutine(getAccount());
+    }
+
+    IEnumerator CheckUsername(string username, string password, string email)
+    {
+        var task = databaseReference.Child("Account").Child(username).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
+
+        DataSnapshot datasnapshot = task.Result;
+
+        if (datasnapshot.Exists)
+        {
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("Thông báo", "Tài khoản đã tồn tại", "Ok");
+#endif
+            yield return 0;
+        }
+        else
+        {
+            StartCoroutine(SetupIntoDb(username, password, email));
+        }
+    }
+
+    IEnumerator SetupIntoDb(string username, string _password, string _email)
+    {
+        var data = new Dictionary<string, object>
+        {
+            {"password", _password},
+            {"email", _email},
+        };
+
+
+        var task = databaseReference.Child("Account").Child(username).SetValueAsync(data);
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
+
+        SignIn();
     }
 
     public void SignIn()
@@ -74,53 +115,8 @@ public class SignUp : MonoBehaviour
         SceneController.Instance.MoveToSignIn();
     }
 
-    IEnumerator getAccount()
-    {
-        using(UnityWebRequest request = UnityWebRequest.Get(URL + "?username=" + username))
-        {
-            yield return request.SendWebRequest();
-            if(request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(request.error);
-            }
-            else
-            {
-                string json = request.downloadHandler.text;
-                if (!json.Equals("null", System.StringComparison.OrdinalIgnoreCase))
-                {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "Tài khoản đã tồn tại", "Ok");
-#endif
-                }
-                else
-                {
-                    //data = "{\"username\":\"" + username + "\", \"email\":\"" + email + "\", \"password\":\"" + password + "\"}";
-                    data = string.Format($"?username={username}&email={email}&password={password}");
-                    StartCoroutine(saveToAccount());
-                }
-            }
-            request.Dispose();
-        }
-    }
-
-    IEnumerator saveToAccount()
-    {
-        using (UnityWebRequest request = UnityWebRequest.Put(URL + data ,data))
-        {
-            
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-
-                Debug.LogError(request.error);
-            }
-            else
-            {
-                SceneController.Instance.MoveToSignIn();
-            }
-            request.Dispose();
-        }
-    }
+    
 
 
 }
+
