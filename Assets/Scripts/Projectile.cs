@@ -75,11 +75,11 @@ public class Projectile : MonoBehaviour
             if (collision.gameObject.name.Contains("AngryPig"))
             {
                 AngryPig angrypig = collision.gameObject.GetComponent<AngryPig>();
-                angrypig.beAttacked(damageSkill, Property.Instance.amor_penetraction);
+                angrypig.BeAttack(damageSkill, Property.Instance.amor_penetraction);
             }else if (collision.gameObject.name.Contains("Chicken"))
             {
                 Chicken chicken = collision.gameObject.GetComponent<Chicken>();
-                chicken.beAttacked(damageSkill, Property.Instance.amor_penetraction);
+                chicken.BeAttack(damageSkill, Property.Instance.amor_penetraction);
             }else if (collision.gameObject.name.Contains("Duck"))
             {
 

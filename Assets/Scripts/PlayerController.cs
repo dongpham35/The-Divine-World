@@ -440,7 +440,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 {
 
                     AngryPig angrypig = hit2.collider.GetComponent<AngryPig>();
-                    angrypig.beAttacked((int)(attack_damage * (1 + crit)), amor_penetraction);
+                    angrypig.BeAttack((int)(attack_damage * (1 + crit)), amor_penetraction);
                     if (angrypig.currenthealth == 0)
                     {
                         Account.Instance.experience_points += angrypig.experience_point;
@@ -452,7 +452,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 {
 
                     Chicken chicken = hit2.collider.GetComponent<Chicken>();
-                    chicken.beAttacked((int)(attack_damage * (1 + crit)), amor_penetraction);
+                    chicken.BeAttack((int)(attack_damage * (1 + crit)), amor_penetraction);
                     if (chicken.currenthealth == 0)
                     {
                         Account.Instance.experience_points += chicken.experience_point;
