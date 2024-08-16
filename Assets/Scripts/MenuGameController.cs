@@ -261,14 +261,17 @@ public class MenuGameController : MonoBehaviourPunCallbacks
             speed.text = "Tốc độ: " + Property.Instance.speed.ToString();
             critical_rate.text = "Chí mạng: " + Property.Instance.critical_rate.ToString();
             amor_penetraction.text = "Xuyên giáp: " + Property.Instance.amor_penetraction.ToString();
-            if (sum_itemID_attached != Item_Attached.Instance.item_attacheds.Sum())
+            if (sum_itemID_attached != Item_Attached.Instance.item_attacheds.Sum() || Content.childCount != Inventory_Item.Instance.items.Count)
             {
                 for (int i = 0; i < Content.childCount; i++)
                 {
                     Destroy(Content.GetChild(i).gameObject);
                 }
-                loadInventory();
-                loadItemAttached();
+                if (panel_inventory.activeSelf)
+                {
+                    loadInventory();
+                    loadItemAttached();
+                }
                 sum_itemID_attached = Item_Attached.Instance.item_attacheds.Sum();
             }
             yield return new WaitForSeconds(0.2f);
@@ -474,7 +477,7 @@ public class MenuGameController : MonoBehaviourPunCallbacks
             {"password", Account.Instance.password },
             {"gold", Account.Instance.gold },
             {"levelID", Account.Instance.levelID },
-            {"classname", Account.Instance.classname },
+            {"class", Account.Instance.classname },
             {"level", level },
             {"exp", Account.Instance.experience_points }
         };

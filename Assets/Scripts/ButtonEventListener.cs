@@ -36,7 +36,7 @@ public class ButtonEventListener : MonoBehaviour
             Property.Instance.amor_penetraction = Mathf.Clamp(Property.Instance.amor_penetraction + item.value, 0, 50);
             Property.Instance.critical_rate = Mathf.Clamp(Property.Instance.critical_rate + item.value, 0, 100);
             StartCoroutine(updatePropertyTable(Property.Instance.username, Property.Instance.blood, Property.Instance.attack_damage,
-                Property.Instance.amor, Property.Instance.critical_rate, Property.Instance.speed, Property.Instance.amor_penetraction));
+                Property.Instance.amor, Property.Instance.speed, Property.Instance.critical_rate, Property.Instance.amor_penetraction));
         }
         else
         {
@@ -93,6 +93,7 @@ public class ButtonEventListener : MonoBehaviour
 
         if (item_Selected.quality <= 0)
         {
+            Inventory_Item.Instance.items.Remove(item_Selected);
             deleteInventoryItem(item_Selected.inventoryID, item_Selected.itemID);
         }
         else
@@ -199,7 +200,7 @@ public class ButtonEventListener : MonoBehaviour
         {
             { "blood", blood },
             { "amor", amor },
-            { "attack", attack },
+            { "attack_damage", attack },
             { "speed", speed },
             { "critical_rate", critical_rate },
             { "amor_penetraction", amor_penetraction }

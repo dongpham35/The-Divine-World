@@ -16,7 +16,6 @@ using Firebase.Database;
 
 public class LogIn : MonoBehaviourPunCallbacks
 {
-    public FirebaseManager firebasemanager;
 
     public TMP_InputField usernameInputField;
     public TMP_InputField passwordInputField;
@@ -52,7 +51,6 @@ public class LogIn : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         panel_loading.SetActive(false);
-        PhotonNetwork.JoinLobby();
     }
     public void SignIn()
     {
@@ -67,112 +65,22 @@ public class LogIn : MonoBehaviourPunCallbacks
     
     public IEnumerator CheckLogin(string username, string password)
     {
-        //Check new Login and instanctiate new data
-        var ChecknewLogin = databaseReference.Child("Account").Child(username).GetValueAsync();
-        yield return new WaitUntil(predicate: () => ChecknewLogin.IsCompleted);
-        if (ChecknewLogin.Result.ChildrenCount <= 2)// when new login, account has two field data: password, email
+        var task = databaseReference.Child("Account").Child(username).Child("password").GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => task.IsCompleted);
+        if (task.Result.Value.Equals(password))
         {
-            foreach (var child in ChecknewLogin.Result.Children)
-            {
-                if (child.Key.Equals("password"))
-                {
-                    string pass = child.Value.ToString();
-                    if (pass.Equals(password))
-                    {
-                        StartCoroutine(getAccount(username));
-                    }
-                    else
-                    {
-#if UNITY_EDITOR
-                    EditorUtility.DisplayDialog("Thông báo", "username or password is incorrect", "Ok");
-#endif
-                        yield return null;
-                    }
-                }
-                
-            }
-            
-            yield return null;
+            Account.Instance.username = username;
+            SceneController.Instance.MoveToLoading();
         }
         else
         {
-            foreach (var child in ChecknewLogin.Result.Children)
-            {
-                if (child.Key.Equals("password"))
-                {
-                    string pass = child.Value.ToString();
-                    if (pass.Equals(password))
-                    {
-                        StartCoroutine(firebasemanager.GetAccount(username));
-                    }
-                    else
-                    {
-#if UNITY_EDITOR
-                        EditorUtility.DisplayDialog("Thông báo", "username or password is incorrect", "Ok");
-#endif
-                        yield return null;
-                    }
-                }
-
-            }
+            Debug.Log("Tài khoản hoặc mật khẩu không đúng");
         }
-
-/*        var data = databaseReference.Child("Account").Child(username).Child("password").GetValueAsync();
-        yield return new WaitUntil(predicate: () => data.IsCompleted);
-        try
-        {
-            if (data.Result.Value.Equals(password))
-            {
-                StartCoroutine(firebasemanager.GetAccount(username));
-            }
-            else
-            {
-#if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Thông báo", "username or password is incorrect", "Ok");
-#endif
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogException(ex);
-        }*/
-
-        
-        
     }
     public static int LargestPower(int n)
     {
         if (n == 0) return 0;
         return (int)Mathf.Floor(Mathf.Log(n, 2));
-    }
-
-    IEnumerator getAccount(string username)
-    {
-        var data = databaseReference.Child("Account").Child(username.ToString()).GetValueAsync();
-
-        yield return new WaitUntil(predicate: () => data.IsCompleted);
-        DataSnapshot snapshot = data.Result;
-        if (snapshot.Exists)
-        {
-            Account.Instance.username = username.ToString();
-            foreach (var i in snapshot.Children)
-            {
-                if (i.Key.Equals("email"))
-                {
-                    Account.Instance.email = i.Value.ToString();
-                    continue;
-                }
-                if (i.Key.Equals("password"))
-                {
-                    Account.Instance.password = i.Value.ToString();
-                    continue;
-                }
-            }
-            SceneManager.LoadScene("NewSignIn");
-        }
-        else
-        {
-            Debug.Log("User not found.");
-        }
     }
 }

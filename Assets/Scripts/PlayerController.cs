@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private float lastbedamage;
 
     //property player
-    private int speed ;
+    private float speed ;
     private int blood ;
     private int attack_damage;
     private int amor;
@@ -133,7 +133,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             animator_Player = GetComponent<Animator>();
             spriRender_Player = GetComponent<SpriteRenderer>();
             collider_Player = GetComponent<BoxCollider2D>();
-            speed = Property.Instance.speed;
+            speed = Property.Instance.speed * 0.2f;
             blood = Property.Instance.blood;
             attack_damage = Property.Instance.attack_damage;
             amor = Property.Instance.amor;
@@ -218,17 +218,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
             dirX = canAction ? Input.GetAxisRaw("Horizontal") : 0;
             if (isGround())
             {
-                rb.velocity = new Vector2((float)dirX * speed * 2 / 3 * 0.2f, rb.velocity.y);
+                rb.velocity = new Vector2((float)dirX * speed * 2 / 3 , rb.velocity.y);
             }
             else
             {
-                rb.velocity = new Vector2((float)dirX * speed * 0.2f, rb.velocity.y);
+                rb.velocity = new Vector2((float)dirX * speed, rb.velocity.y);
             }
 
             if (Input.GetButtonDown("Vertical") && isGround() && canAction )
             {
                 jump.Play();
-                rb.velocity = new Vector2(rb.velocity.x, speed * 0.2f);
+                rb.velocity = new Vector2(rb.velocity.x , speed);
             }
 
             if (animator_Player.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && Time.time - lastAttack > 0.3)
@@ -624,7 +624,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {"password", Account.Instance.password },
             {"gold", gold },
             {"levelID", Account.Instance.levelID },
-            {"classname", Account.Instance.classname },
+            {"class", Account.Instance.classname },
             {"level", Account.Instance.level },
             {"exp", exp }
         };

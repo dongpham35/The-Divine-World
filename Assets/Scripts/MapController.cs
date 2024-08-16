@@ -206,7 +206,7 @@ public class MapController : MonoBehaviourPunCallbacks
             {"password", Account.Instance.password },
             {"gold", gold },
             {"levelID", Account.Instance.levelID },
-            {"classname", Account.Instance.classname },
+            {"class", Account.Instance.classname },
             {"level", Account.Instance.level },
             {"exp", exp }
         };
