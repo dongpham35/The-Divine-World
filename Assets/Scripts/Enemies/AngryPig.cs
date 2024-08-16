@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
-public class AngryPig : MonoBehaviour
+public class AngryPig : MonoBehaviour, IEnemy
 {
     public List<GameObject> characters;
     private GameObject character;
@@ -53,7 +53,50 @@ public class AngryPig : MonoBehaviour
         direction = new Vector3(1, 0, 0);
     }
 
-    private void checkDistance()
+    
+
+    private void Update()
+    {
+        if (view.IsMine)
+        {
+            if (character == null)
+            {
+                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
+            }
+            CheckDistance();
+            if (currenthealth == 0)
+            {
+                animAngryPig.SetBool("hit1", true);
+                Destroy(gameObject);
+            }
+
+            if (Time.time - lastbedamage > 1f)
+            {
+                animAngryPig.SetBool("hit1", false);
+                canAction = true;
+            }
+
+
+            if (Vector2.Distance(transform.position, character.transform.position) < 2f)
+            {
+                isSeeplayer = true;
+            }
+            if (!isSeeplayer)
+            {
+                MoveNorState();
+            }
+            else
+            {
+
+                direction = (character.transform.position - transform.position).normalized;
+                MoveNorState();
+            }
+            HitPLayer();
+        }
+    }
+
+
+    public void CheckDistance()
     {
         float distance = 0f;
         foreach (var ch in characters)
@@ -74,48 +117,7 @@ public class AngryPig : MonoBehaviour
             }
         }
     }
-
-    private void Update()
-    {
-        if (view.IsMine)
-        {
-            if (character == null)
-            {
-                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
-            }
-            checkDistance();
-            if (currenthealth == 0)
-            {
-                animAngryPig.SetBool("hit1", true);
-                Destroy(gameObject);
-            }
-
-            if (Time.time - lastbedamage > 1f)
-            {
-                animAngryPig.SetBool("hit1", false);
-                canAction = true;
-            }
-
-
-            if (Vector2.Distance(transform.position, character.transform.position) < 2f)
-            {
-                isSeeplayer = true;
-            }
-            if (!isSeeplayer)
-            {
-                MoveNormalState();
-            }
-            else
-            {
-
-                direction = (character.transform.position - transform.position).normalized;
-                MoveNormalState();
-            }
-            hitPlayer();
-        }
-    }
-
-    private void MoveNormalState()
+    public void MoveNorState()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.1f, direction, 0.7f, LayerMask.GetMask("Ground"));
         if (hit.collider != null && isSeeplayer)
@@ -154,17 +156,18 @@ public class AngryPig : MonoBehaviour
     }
 
 
-    public void beAttacked(int attack, int am_penetraction)
+
+    public void BeAttack(int attack_damage, int amor_penetraction)
     {
-        int AmorAfterPenetraction = amor * (1 - am_penetraction / 100);
+        int AmorAfterPenetraction = amor * (1 - amor_penetraction / 100);
         damagebetaken = (float)(1 - 0.99 * AmorAfterPenetraction / (AmorAfterPenetraction + 60));
         canAction = false;
         lastbedamage = Time.time;
         animAngryPig.SetBool("hit1", true);
-        currenthealth = Mathf.Clamp(currenthealth - (int)(attack * damagebetaken), 0, blood);
+        currenthealth = Mathf.Clamp(currenthealth - (int)(attack_damage * damagebetaken), 0, blood);
     }
 
-    private void hitPlayer()
+    public void HitPLayer()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.3f, LayerMask.GetMask("Player"));
         if (hit.collider != null && Time.time - lastDamageTime > 1.5f)

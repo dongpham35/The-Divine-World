@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Chicken : MonoBehaviour
+public class Chicken : MonoBehaviour, IEnemy
 {
     public List<GameObject> characters;
     private GameObject character;
@@ -52,27 +52,7 @@ public class Chicken : MonoBehaviour
         direction = new Vector3(1, 0, 0);
     }
 
-    private void checkDistance()
-    {
-        float distance = 0f;
-        foreach(var ch in characters)
-        {
-            if (view.IsMine)
-            {
-                if (distance == 0)
-                {
-                    distance = Vector2.Distance(transform.position, ch.transform.position);
-                    character = ch;
-                    continue;
-                }
-                if(distance > Vector2.Distance(transform.position, ch.transform.position))
-                {
-                    distance = Vector2.Distance(transform.position, ch.transform.position);
-                    character = ch;
-                }
-            }
-        }
-    }
+
 
     private void Update()
     {
@@ -82,7 +62,7 @@ public class Chicken : MonoBehaviour
             {
                 characters = GameObject.FindGameObjectsWithTag("Player").ToList();
             }
-            checkDistance();
+            CheckDistance();
             if (currenthealth == 0)
             {
                 animChicken.SetBool("hit1", true);
@@ -102,19 +82,40 @@ public class Chicken : MonoBehaviour
             }
             if (!isSeeplayer)
             {
-                MoveNormalState();
+                MoveNorState();
             }
             else
             {
 
-                direction = (character.transform.position- transform.position).normalized;
-                MoveNormalState();
+                direction = (character.transform.position - transform.position).normalized;
+                MoveNorState();
             }
-            hitPlayer();
+            HitPLayer();
         }
     }
 
-    private void MoveNormalState()
+    public void CheckDistance()
+    {
+        float distance = 0f;
+        foreach (var ch in characters)
+        {
+            if (view.IsMine)
+            {
+                if (distance == 0)
+                {
+                    distance = Vector2.Distance(transform.position, ch.transform.position);
+                    character = ch;
+                    continue;
+                }
+                if (distance > Vector2.Distance(transform.position, ch.transform.position))
+                {
+                    distance = Vector2.Distance(transform.position, ch.transform.position);
+                    character = ch;
+                }
+            }
+        }
+    }
+    public void MoveNorState()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.1f, direction, 0.7f, LayerMask.GetMask("Ground"));
         if (hit.collider != null && isSeeplayer)
@@ -127,7 +128,7 @@ public class Chicken : MonoBehaviour
         }
 
         rb.velocity = new Vector2(speed * direction.x, rb.velocity.y);
-        if(Vector2.Distance(transform.position, character.transform.position) < 0.7f)
+        if (Vector2.Distance(transform.position, character.transform.position) < 0.7f)
         {
             rb.velocity = Vector2.zero;
         }
@@ -140,7 +141,7 @@ public class Chicken : MonoBehaviour
         {
             animChicken.SetInteger("StateNor", 1);
             spriteChicken.flipX = false;
-        }   
+        }
         else
         {
             animChicken.SetInteger("StateNor", 0);
@@ -149,11 +150,11 @@ public class Chicken : MonoBehaviour
         {
             animChicken.SetInteger("StateNor", 1);
         }
-        
+
     }
 
 
-    public void beAttacked(int attack, int am_penetraction)
+    public void BeAttack(int attack, int am_penetraction)
     {
         int AmorAfterPenetraction = amor * (1 - am_penetraction / 100);
         damagebetaken = (float)(1 - 0.99 * AmorAfterPenetraction / (AmorAfterPenetraction + 60));
@@ -163,10 +164,10 @@ public class Chicken : MonoBehaviour
         currenthealth = Mathf.Clamp(currenthealth - (int)(attack * damagebetaken), 0, blood);
     }
 
-    private void hitPlayer()
+    public void HitPLayer()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + direction * 0.3f, direction, 0.3f, LayerMask.GetMask("Player"));
-        if(hit.collider != null && Time.time - lastDamageTime > 1.5f)
+        if (hit.collider != null && Time.time - lastDamageTime > 1.5f)
         {
             PlayerController player = hit.collider.GetComponent<PlayerController>();
             player.beAttack(attack_damage, amor_penetraction);

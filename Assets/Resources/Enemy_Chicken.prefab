@@ -221,13 +221,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characters: []
   blood: 15
-  attack_damage: 5
+  attack_damage: 2
   amor: 3
-  speed: 4
+  speed: 3
   critical_rate: 0
   amor_penetraction: 0
   gold: 1
-  experience_point: 5
+  experience_point: 1
 --- !u!114 &193709093692628691
 MonoBehaviour:
   m_ObjectHideFlags: 0
