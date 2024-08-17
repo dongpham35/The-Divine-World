@@ -30,7 +30,7 @@ public class LogIn : MonoBehaviourPunCallbacks
     private void Start()
     {
         databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-        if (PhotonNetwork.InLobby)
+        if (PhotonNetwork.IsConnected)
         {
             panel_loading.SetActive(false);
         }
@@ -68,7 +68,7 @@ public class LogIn : MonoBehaviourPunCallbacks
         var task = databaseReference.Child("Account").Child(username).Child("password").GetValueAsync();
 
         yield return new WaitUntil(predicate: () => task.IsCompleted);
-        if (task.Result.Value.Equals(password))
+        if (task.Result.Value.ToString().Equals(password))
         {
             Account.Instance.username = username;
             SceneController.Instance.MoveToLoading();

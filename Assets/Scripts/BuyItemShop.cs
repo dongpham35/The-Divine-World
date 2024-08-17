@@ -33,7 +33,7 @@ public class BuyItemShop : MonoBehaviour
             {
                 itemInInventoryItem = new Inventory_Item();
                 itemInInventoryItem.quality = 1;
-                itemInInventoryItem.inventoryID = Inventory_Item.Instance.items[0].inventoryID;
+                itemInInventoryItem.inventoryID = Inventory.Instance.inventoryID;
                 itemInInventoryItem.itemID = item_current_selected.itemID;
 
                 Inventory_Item.Instance.items.Add(itemInInventoryItem);

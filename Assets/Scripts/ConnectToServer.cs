@@ -27,10 +27,9 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     IEnumerator CheckNewLogin()
     {
-        var task = databaseReference.Child("Account").Child(Account.Instance.username).Child("class").GetValueAsync();
+        var task = databaseReference.Child("Account").Child(Account.Instance.username).GetValueAsync();
         yield return new WaitUntil(predicate: () => task.IsCompleted);
-
-        if (string.IsNullOrEmpty(task.Result.Value.ToString()))
+        if (task.Result.ChildrenCount == 2)
         {
             SceneManager.LoadScene("NewSignIn");
         }
