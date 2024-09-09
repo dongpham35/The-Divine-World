@@ -11,6 +11,9 @@ using UnityEngine.UI;
 using JetBrains.Annotations;
 using TMPro;
 using Firebase.Database;
+using Photon.Realtime;
+using System.Linq;
+using ExitGames.Client.Photon;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -33,6 +36,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] AudioSource jump;
 
     PhotonView view;
+    public int IdLoser;
+    public const byte EventCode_Loser = 1;
+    private bool endGame;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriRender_Player;
@@ -40,8 +46,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private BoxCollider2D collider_Player;
     private DatabaseReference databaseReference;
 
-    private int myId;
-    public int idLoser;
     private enum anim { idle, run, jump, fall}
 
     private anim state = anim.idle;
@@ -113,8 +117,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 numOfElement = -1;
             }
+            PhotonNetwork.NetworkingClient.EventReceived += OnEventReceived;
         }
     }
+/*
+    private void OnEnable()
+    {
+        PhotonNetwork.NetworkingClient.EventReceived += OnEventReceived;
+    }
+
+    private void OnDisable()
+    {
+        PhotonNetwork.NetworkingClient.EventReceived -= OnEventReceived;
+    }*/
 
     private void Start()
     {
@@ -142,13 +157,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             gold = Account.Instance.gold;
             exp = Account.Instance.experience_points;
-            photonView.RPC("DataSynchronization", RpcTarget.OthersBuffered, Property.Instance.speed, Property.Instance.blood, Property.Instance.attack_damage,
+            view.RPC("DataSynchronization", RpcTarget.OthersBuffered, Property.Instance.speed, Property.Instance.blood, Property.Instance.attack_damage,
                 Property.Instance.amor, Property.Instance.amor_penetraction, Property.Instance.critical_rate, Account.Instance.gold, Account.Instance.experience_points, power, numOfElement);
             healthBar.SetMaxHealth(blood);
             powerBar.SetMaxHealth(power);
 
-            myId = view.ViewID;
-            idLoser = 0;
             currentHealth = blood;
             currentPower = power;
             canAction = true;
@@ -162,6 +175,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             cooldownHit2 = 1f;
             cooldownHit3 = 1.5f;
             direction = new Vector3(1, 0, 0);
+            IdLoser = 0;
+            endGame = false;
         }
         else
         {
@@ -195,18 +210,33 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (view.IsMine)
         {
-            
+            if (endGame)
+            {
+                if (IdLoser == view.ViewID)
+                {
+                    Debug.Log("Loser : " + view.ViewID);
+                    return;
+                }
+                else
+                {
+                    Debug.Log("Winner: " + view.ViewID);
+                }
+            }
+
             if (Time.time - lastTimeUseHit1 >= cooldownHit1) canHit1 = true;
             if (Time.time - lastTimeUseHit2 >= cooldownHit2) canHit2 = true;
             if (Time.time - lastTimeUseHit3 >= cooldownHit3) canHit3 = true;
             if (currentHealth == 0)
             {
+                IdLoser = view.ViewID;
                 isKnockOut = true;
                 animator_Player.SetBool("BeKnockOut", isKnockOut);
                 canAction = false;
                 photonView.RPC("changeKnockOut", RpcTarget.Others);
-                photonView.RPC("SendIdLoser", RpcTarget.All, myId);
-                panel_finish.SetActive(true);
+                ExecuteEndGame(view.ViewID);
+                
+                endGame = true;
+                PhotonNetwork.NetworkingClient.EventReceived -= OnEventReceived;
             }
             
             if (Time.time - lastbedamage > 0.3f && currentHealth != 0)
@@ -420,10 +450,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     {
                         enemy.beAttack((int)(attack_damage * (1 + crit)), amor_penetraction);
                     }
-                    if (enemy.currentHealth == 0)
-                    {
-                        Gift();
-                    }
+
                 }
 
             }
@@ -479,7 +506,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
             Account.Instance.gold += 3;
             Account.Instance.experience_points += 5;
             StartCoroutine(updateAccountTable(Account.Instance.username, Account.Instance.gold, Account.Instance.experience_points));
-            panel_finish.SetActive(true);
         }
     }
     
@@ -494,7 +520,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         lastbedamage = Time.time;
         changeHealth(-damage);
         healthBar.SetHealth(currentHealth);
-        photonView.RPC("changeHealthBar", RpcTarget.Others, currentHealth);
+        view.RPC("changeHealthBar", RpcTarget.Others, currentHealth);
         GameObject txtdamagetacken = PhotonNetwork.Instantiate(txtDamageTaken.name, transform.position + new Vector3(0, 0.2f, 0), Quaternion.identity);
         txtdamagetacken.GetComponentInChildren<TMP_Text>().text = ((int)(damage * damagebetaken)).ToString();
     }
@@ -563,10 +589,38 @@ public class PlayerController : MonoBehaviourPunCallbacks
         canAction = false;
     }
 
-    [PunRPC]
-    public void SendIdLoser(int id)
+    public void ExecuteEndGame(int idLoser)
     {
-        idLoser = id;
+       IdLoser = idLoser;
+
+        // Create a content array for the event data
+        object[] content = new object[] { IdLoser };
+
+        // Raise an event to all other players
+        PhotonNetwork.RaiseEvent(EventCode_Loser, content, RaiseEventOptions.Default, SendOptions.SendReliable);
+    }
+
+    private void OnEventReceived(EventData photonEvent)
+    {
+        if (photonEvent.Code == EventCode_Loser)
+        {
+            object[] data = (object[])photonEvent.CustomData;
+            int idLoser = (int)data[0];
+
+            Debug.Log("Loser ID received via RaiseEvent: " + idLoser);
+
+            // Handle the logic of endgame here
+            if (PhotonView.Get(this).ViewID != idLoser)
+            {
+                Gift();// give Gift for winner
+            }
+            panel_finish.SetActive(true);
+        }
+    }
+
+    private void DebugViewID()
+    {
+        Debug.Log(view.ViewID);
     }
 
     [PunRPC]

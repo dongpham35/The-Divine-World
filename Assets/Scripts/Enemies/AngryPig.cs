@@ -17,7 +17,6 @@ public class AngryPig : MonoBehaviour, IEnemy
     [SerializeField] private int attack_damage = 10;
     [SerializeField] private int amor = 10;
     [SerializeField] private int speed = 5;
-    [SerializeField] private int critical_rate = 0;
     [SerializeField] private int amor_penetraction = 0;
     public int gold = 2;
     public int experience_point = 3;
@@ -32,9 +31,11 @@ public class AngryPig : MonoBehaviour, IEnemy
     private float damagebetaken; //%
     internal int currenthealth;
     private float lastbedamage;
-    private bool canAction;
+    private bool canAction; 
 
     private Vector3 direction;
+
+    private float cooldownAction = 1f; // default cooldown = 1s
 
     private void Start()
     {
@@ -59,24 +60,41 @@ public class AngryPig : MonoBehaviour, IEnemy
     {
         if (view.IsMine)
         {
-            if (character == null)
-            {
-                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
-            }
-            CheckDistance();
             if (currenthealth == 0)
             {
                 animAngryPig.SetBool("hit1", true);
                 Destroy(gameObject);
             }
+            if (!canAction)
+            {
+                lastbedamage -= Time.deltaTime;
+                if (lastbedamage <= 0)
+                {
+                    canAction = true;
+                }
+                return;
+            }
+            if (character == null)
+            {
+                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
+            }
+            CheckDistance();
+            
 
-            if (Time.time - lastbedamage > 1f)
+            if (lastbedamage <= 0f && canAction)
             {
                 animAngryPig.SetBool("hit1", false);
-                canAction = true;
             }
 
+            
+        }
+    }
 
+    private void FixedUpdate()
+    {
+        if(view.IsMine)
+        {
+            if (character == null) return;
             if (Vector2.Distance(transform.position, character.transform.position) < 2f)
             {
                 isSeeplayer = true;
@@ -162,7 +180,7 @@ public class AngryPig : MonoBehaviour, IEnemy
         int AmorAfterPenetraction = amor * (1 - amor_penetraction / 100);
         damagebetaken = (float)(1 - 0.99 * AmorAfterPenetraction / (AmorAfterPenetraction + 60));
         canAction = false;
-        lastbedamage = Time.time;
+        lastbedamage = cooldownAction;
         animAngryPig.SetBool("hit1", true);
         currenthealth = Mathf.Clamp(currenthealth - (int)(attack_damage * damagebetaken), 0, blood);
     }

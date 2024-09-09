@@ -844,7 +844,7 @@ MonoBehaviour:
   hit2: {fileID: -7960389115546165933}
   hit3: {fileID: -2051324736393334170}
   jump: {fileID: 2194606570983104792}
-  idLoser: 0
+  IdLoser: 0
   currentHealth: 0
   gold: 0
   exp: 0

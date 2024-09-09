@@ -224,7 +224,6 @@ MonoBehaviour:
   attack_damage: 2
   amor: 3
   speed: 3
-  critical_rate: 0
   amor_penetraction: 0
   gold: 1
   experience_point: 1

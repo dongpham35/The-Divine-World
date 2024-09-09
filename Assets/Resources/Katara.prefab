@@ -694,9 +694,9 @@ GameObject:
   - component: {fileID: 7042383044145313637}
   - component: {fileID: 7042383044145313636}
   - component: {fileID: 7042383044145313635}
-  - component: {fileID: 7042383044145313634}
   - component: {fileID: 7042383044145313633}
   - component: {fileID: 3197631298645939833}
+  - component: {fileID: 7042383044145313634}
   - component: {fileID: -3389933200625141236}
   - component: {fileID: 8380510595717804838}
   - component: {fileID: 5575921812336027840}
@@ -825,36 +825,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5344052, y: 0.97269154}
   m_EdgeRadius: 0
---- !u!114 &7042383044145313634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7042383044145313632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d0280e099e6719429e52ded88379e85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 6184785058219702380, guid: b4af5cf3bcb30bf4aa10c822d6caf483, type: 3}
-  healthBar: {fileID: 6609418199199553626}
-  powerBar: {fileID: 6069505419432627327}
-  panel_finish: {fileID: 4534188529066477285}
-  cam: {fileID: 6935215115483601734, guid: ad262df5fb3a8ff4bbc4ee8d17033590, type: 3}
-  txtDamageTaken: {fileID: 8056816348127988500, guid: ddbd9123380b9ae4896071a5afe1741e, type: 3}
-  cooldownHit1: 0
-  cooldownHit2: 0
-  cooldownHit3: 0
-  hit1: {fileID: 5575921812336027840}
-  hit2: {fileID: 650794643838964707}
-  hit3: {fileID: 4365876625762763338}
-  jump: {fileID: 4977428238351258534}
-  idLoser: 0
-  currentHealth: 0
-  gold: 0
-  exp: 0
-  numOfElement: 0
 --- !u!95 &7042383044145313633
 Animator:
   serializedVersion: 5
@@ -900,6 +870,36 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &7042383044145313634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7042383044145313632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0280e099e6719429e52ded88379e85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 6184785058219702380, guid: b4af5cf3bcb30bf4aa10c822d6caf483, type: 3}
+  healthBar: {fileID: 6609418199199553626}
+  powerBar: {fileID: 6069505419432627327}
+  panel_finish: {fileID: 4534188529066477285}
+  cam: {fileID: 6935215115483601734, guid: ad262df5fb3a8ff4bbc4ee8d17033590, type: 3}
+  txtDamageTaken: {fileID: 8056816348127988500, guid: ddbd9123380b9ae4896071a5afe1741e, type: 3}
+  cooldownHit1: 0
+  cooldownHit2: 0
+  cooldownHit3: 0
+  hit1: {fileID: 5575921812336027840}
+  hit2: {fileID: 650794643838964707}
+  hit3: {fileID: 4365876625762763338}
+  jump: {fileID: 4977428238351258534}
+  IdLoser: 0
+  currentHealth: 0
+  gold: 0
+  exp: 0
+  numOfElement: 0
 --- !u!114 &-3389933200625141236
 MonoBehaviour:
   m_ObjectHideFlags: 0

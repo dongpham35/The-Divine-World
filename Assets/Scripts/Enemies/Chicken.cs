@@ -16,7 +16,6 @@ public class Chicken : MonoBehaviour, IEnemy
     [SerializeField] private int attack_damage = 1;
     [SerializeField] private int amor = 3;
     [SerializeField] private int speed = 4;
-    [SerializeField] private int critical_rate = 0;
     [SerializeField] private int amor_penetraction = 0;
     public int gold = 1;
     public int experience_point = 1;
@@ -34,6 +33,8 @@ public class Chicken : MonoBehaviour, IEnemy
     private bool canAction;
 
     private Vector3 direction;
+
+    private float cooldownAction = 1f;// default cooldown = 1s
 
     private void Start()
     {
@@ -58,24 +59,41 @@ public class Chicken : MonoBehaviour, IEnemy
     {
         if (view.IsMine)
         {
-            if (character == null)
-            {
-                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
-            }
-            CheckDistance();
             if (currenthealth == 0)
             {
                 animChicken.SetBool("hit1", true);
                 Destroy(gameObject);
             }
+            if (!canAction)
+            {
+                lastbedamage -= Time.deltaTime;
+                if (lastbedamage <= 0)
+                {
+                    canAction = true;
+                }
+                return;
+            }
+            if (character == null)
+            {
+                characters = GameObject.FindGameObjectsWithTag("Player").ToList();
+            }
+            CheckDistance();
+            
 
-            if (Time.time - lastbedamage > 1f)
+            if (lastbedamage <= 0f && canAction)
             {
                 animChicken.SetBool("hit1", false);
-                canAction = true;
             }
 
+            
+        }
+    }
 
+    private void FixedUpdate()
+    {
+        if (view.IsMine)
+        {
+            if (character == null) return;
             if (Vector2.Distance(transform.position, character.transform.position) < 2f)
             {
                 isSeeplayer = true;
@@ -159,7 +177,7 @@ public class Chicken : MonoBehaviour, IEnemy
         int AmorAfterPenetraction = amor * (1 - am_penetraction / 100);
         damagebetaken = (float)(1 - 0.99 * AmorAfterPenetraction / (AmorAfterPenetraction + 60));
         canAction = false;
-        lastbedamage = Time.time;
+        lastbedamage = cooldownAction;
         animChicken.SetBool("hit1", true);
         currenthealth = Mathf.Clamp(currenthealth - (int)(attack * damagebetaken), 0, blood);
     }
